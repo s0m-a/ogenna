@@ -1,0 +1,36 @@
+enum UserRole {
+  OWNER
+  ADMIN
+  CONTENT_EDITOR
+  INVENTORY_MANAGER
+  ORDER_MANAGER
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  passwordHash  String
+  name          String
+  role          UserRole       @default(CONTENT_EDITOR)
+  isActive      Boolean        @default(true)
+  refreshTokens RefreshToken[]
+  cart          Cart?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  lastLoginAt   DateTime?
+
+  @@index([email])
+}
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}

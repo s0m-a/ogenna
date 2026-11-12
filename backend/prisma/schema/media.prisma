@@ -1,0 +1,31 @@
+enum MediaResourceType {
+  IMAGE
+  VIDEO
+  RAW
+}
+
+model MediaAsset {
+  id            String            @id @default(cuid())
+  provider      String            @default("cloudinary")
+  publicId      String            @unique
+  url           String
+  secureUrl     String
+  resourceType  MediaResourceType @default(IMAGE)
+  format        String?
+  width         Int?
+  height        Int?
+  bytes         Int?
+  folder        String?
+  alt           String?
+  tags          String[]          @default([])
+  originalName  String?
+  createdById   String?
+  productImages ProductImage[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  archivedAt    DateTime?
+
+  @@index([folder])
+  @@index([resourceType])
+  @@index([createdAt])
+}

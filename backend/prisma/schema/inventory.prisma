@@ -1,0 +1,33 @@
+enum MovementReason {
+  INITIAL_STOCK
+  RESTOCK
+  SALE_RESERVED
+  SALE_DEDUCTED
+  RESERVATION_RELEASED
+  ADMIN_ADJUSTMENT
+  RETURN
+}
+
+model InventoryItem {
+  id               String              @id @default(cuid())
+  variantId        String              @unique
+  variant          ProductVariant      @relation(fields: [variantId], references: [id])
+  quantityOnHand   Int                 @default(0)
+  quantityReserved Int                 @default(0)
+  movements        InventoryMovement[]
+  updatedAt        DateTime            @updatedAt
+}
+
+model InventoryMovement {
+  id              String         @id @default(cuid())
+  inventoryItemId String
+  inventoryItem   InventoryItem  @relation(fields: [inventoryItemId], references: [id])
+  delta           Int
+  reason          MovementReason
+  referenceId     String?
+  note            String?
+  createdAt       DateTime       @default(now())
+
+  @@index([inventoryItemId])
+  @@index([createdAt])
+}
