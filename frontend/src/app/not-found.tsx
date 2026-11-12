@@ -133,8 +133,13 @@ export default function NotFound() {
   return (
     <Page>
       <Brand href="/" aria-label="Ogenna — home">
-        <Wordmark>ogenna</Wordmark>
-        <WordmarkSub>fabric shop</WordmarkSub>
+        <Logo
+          src="/logo/ogenna-logo.svg"
+          alt="Ogenna Fabrics"
+          width={704}
+          height={250}
+          priority
+        />
       </Brand>
 
       <Ornament>

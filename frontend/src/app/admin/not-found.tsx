@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import styled from 'styled-components'
 
 const Page = styled.div`
@@ -15,26 +16,14 @@ const Page = styled.div`
 `
 
 const Brand = styled.div`
+  display: flex;
+  justify-content: center;
   margin-bottom: 3.5rem;
 `
 
-const Wordmark = styled.span`
-  font-family: ${({ theme }) => theme.fonts.heading};
-  font-style: italic;
-  font-weight: 400;
-  font-size: 1.5rem;
-  color: ${({ theme }) => theme.colors.primary500};
-  letter-spacing: -0.01em;
-`
-
-const WordmarkSub = styled.span`
-  display: block;
-  font-size: ${({ theme }) => theme.fontSizes.xs};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.colors.textSecondary};
-  margin-top: 2px;
+const Logo = styled(Image)`
+  height: 44px;
+  width: auto;
 `
 
 const Code = styled.p`
@@ -117,8 +106,13 @@ export default function AdminNotFound() {
   return (
     <Page>
       <Brand>
-        <Wordmark>ogenna</Wordmark>
-        <WordmarkSub>Admin</WordmarkSub>
+        <Logo
+          src="/logo/ogenna-logo.svg"
+          alt="Ogenna Fabrics"
+          width={704}
+          height={250}
+          priority
+        />
       </Brand>
 
       <Code aria-hidden>404</Code>
