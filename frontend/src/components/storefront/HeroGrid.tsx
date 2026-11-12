@@ -26,7 +26,7 @@ const TILES: HeroTile[] = [
     title: "New arrivals",
     cta: "Shop new arrivals",
     href: "/shop/new",
-    imageSrc: "/images/linenfabric2.jpg",
+    imageSrc: "/images/linenFabric2.jpg",
     imageAlt: "Draped sage, terracotta and cream cotton fabrics.",
     focal: "center 55%",
   },
