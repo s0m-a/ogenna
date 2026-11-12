@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import styled from 'styled-components'
 import { Heart, Menu, Search, ShoppingBag, User } from 'lucide-react'
 import { MegaMenu } from './MegaMenu'
@@ -77,31 +78,18 @@ const BrandWrap = styled.div`
 
 const Brand = styled(Link)`
   display: inline-flex;
-  flex-direction: column;
   align-items: center;
   text-decoration: none;
   line-height: 1;
 `
 
-const Wordmark = styled.span`
-  font-family: ${({ theme }) => theme.fonts.heading};
-  font-style: italic;
-  font-size: 2.25rem;
-  color: ${({ theme }) => theme.colors.primary500};
-  letter-spacing: -0.01em;
+const LogoImg = styled(Image)`
+  height: 56px;
+  width: auto;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    font-size: 1.75rem;
+    height: 44px;
   }
-`
-
-const WordmarkSub = styled.span`
-  font-size: 0.5625rem;
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.colors.textSecondary};
-  margin-top: 0.1875rem;
 `
 
 const Actions = styled.div`
@@ -205,8 +193,13 @@ export function StorefrontHeader() {
 
         <BrandWrap>
           <Brand href="/" aria-label="Ogenna — home">
-            <Wordmark>ogenna</Wordmark>
-            <WordmarkSub>fabric shop</WordmarkSub>
+            <LogoImg
+              src="/logo/ogenna-logo.svg"
+              alt="Ogenna Fabrics"
+              width={704}
+              height={250}
+              priority
+            />
           </Brand>
         </BrandWrap>
 

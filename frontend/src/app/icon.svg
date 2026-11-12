@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="20 20 260 260">
+  <title>Ogenna</title>
+  <defs>
+    <mask id="eye" maskUnits="userSpaceOnUse" x="0" y="0" width="320" height="320">
+      <rect x="0" y="0" width="320" height="320" fill="#fff"/>
+      <ellipse cx="63" cy="237" rx="7" ry="1.8" transform="rotate(-45 63 237)" fill="#000"/>
+    </mask>
+  </defs>
+  <path d="M56,244 C38,264 62,280 98,270 C122,263 128,252 120,248 C112,244 106,256 118,262 C130,268 150,266 166,262" fill="none" stroke="#D2B99E" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="50" y1="250" x2="250" y2="50" stroke="#5E4632" stroke-width="12" stroke-linecap="round" mask="url(#eye)"/>
+  <circle cx="150" cy="140" r="70" fill="none" stroke="#C49A6C" stroke-width="22"/>
+  <line x1="190" y1="110" x2="250" y2="50" stroke="#5E4632" stroke-width="12" stroke-linecap="round"/>
+</svg>

@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
+import NextImage from 'next/image'
 import { usePathname } from 'next/navigation'
 import styled, { css } from 'styled-components'
 import {
@@ -137,27 +138,14 @@ const SidebarTop = styled.div`
 `
 
 const BrandLink = styled(Link)`
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
+  display: inline-flex;
+  align-items: center;
   text-decoration: none;
 `
 
-const Wordmark = styled.span`
-  font-family: ${({ theme }) => theme.fonts.heading};
-  font-style: italic;
-  font-weight: 400;
-  font-size: 1.375rem;
-  color: ${({ theme }) => theme.colors.primary500};
-  line-height: 1;
-`
-
-const WordmarkSub = styled.span`
-  font-size: 0.625rem;
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.colors.textSecondary};
+const LogoImg = styled(NextImage)`
+  height: 36px;
+  width: auto;
 `
 
 const CloseButton = styled.button`
@@ -258,9 +246,14 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
       <Overlay $open={isOpen} onClick={onClose} aria-hidden />
       <SidebarRoot $open={isOpen} aria-label="Admin navigation">
         <SidebarTop>
-          <BrandLink href="/admin/dashboard">
-            <Wordmark>ogenna</Wordmark>
-            <WordmarkSub>Admin</WordmarkSub>
+          <BrandLink href="/admin/dashboard" aria-label="Ogenna Admin — dashboard">
+            <LogoImg
+              src="/logo/ogenna-logo.svg"
+              alt="Ogenna Fabrics"
+              width={704}
+              height={250}
+              priority
+            />
           </BrandLink>
           <CloseButton onClick={onClose} aria-label="Close navigation">
             <X size={16} />

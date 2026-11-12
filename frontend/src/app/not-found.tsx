@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import styled from 'styled-components'
 
 /* ── Styled components ────────────────────────────────────── */
@@ -18,28 +19,15 @@ const Page = styled.div`
 
 const Brand = styled(Link)`
   display: inline-flex;
-  flex-direction: column;
   align-items: center;
   text-decoration: none;
   line-height: 1;
   margin-bottom: 3.5rem;
 `
 
-const Wordmark = styled.span`
-  font-family: ${({ theme }) => theme.fonts.heading};
-  font-style: italic;
-  font-size: 1.75rem;
-  color: ${({ theme }) => theme.colors.primary500};
-  letter-spacing: -0.01em;
-`
-
-const WordmarkSub = styled.span`
-  font-size: 0.5625rem;
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.colors.textSecondary};
-  margin-top: 0.1875rem;
+const Logo = styled(Image)`
+  height: 52px;
+  width: auto;
 `
 
 const Ornament = styled.div`

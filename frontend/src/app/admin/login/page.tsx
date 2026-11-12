@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import styled, { keyframes } from 'styled-components'
 import { useAuth } from '@/hooks/useAuth'
@@ -52,8 +53,13 @@ export default function LoginPage() {
     <PageWrapper>
       <Card>
         <BrandArea>
-          <Wordmark>ogenna</Wordmark>
-          <WordmarkSub>Admin Console</WordmarkSub>
+          <Logo
+            src="/logo/ogenna-logo.svg"
+            alt="Ogenna Fabrics"
+            width={704}
+            height={250}
+            priority
+          />
         </BrandArea>
 
         <Divider />
@@ -135,30 +141,14 @@ const Card = styled.div`
 /* ── Brand ─────────────────────────────────────────────────── */
 
 const BrandArea = styled.div`
-  text-align: center;
+  display: flex;
+  justify-content: center;
   margin-bottom: 2rem;
 `;
 
-const Wordmark = styled.span`
-  display: block;
-  font-family: ${({ theme }) => theme.fonts.heading};
-  font-style: italic;
-  font-weight: 400;
-  font-size: 2.25rem;
-  color: ${({ theme }) => theme.colors.primary500};
-  letter-spacing: -0.025em;
-  line-height: 1;
-  margin-bottom: 0.375rem;
-`;
-
-const WordmarkSub = styled.span`
-  display: block;
-  font-family: ${({ theme }) => theme.fonts.body};
-  font-size: ${({ theme }) => theme.fontSizes.xs};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.colors.textSecondary};
+const Logo = styled(Image)`
+  height: 64px;
+  width: auto;
 `;
 
 const Divider = styled.hr`
