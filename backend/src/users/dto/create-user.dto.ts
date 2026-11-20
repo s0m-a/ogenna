@@ -1,5 +1,6 @@
 import { UserRole } from '@prisma/client';
-import { IsEmail, IsEnum, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { STAFF_ROLES } from '../staff-roles';
+import { IsEmail, IsIn, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
@@ -15,6 +16,7 @@ export class CreateUserDto {
   password: string;
 
   @IsOptional()
-  @IsEnum(UserRole)
+  // Staff management only — customer accounts are created through Google sign-in.
+  @IsIn(STAFF_ROLES)
   role?: UserRole;
 }

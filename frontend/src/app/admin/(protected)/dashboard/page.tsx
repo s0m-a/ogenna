@@ -2,30 +2,25 @@
 
 import styled from 'styled-components'
 import { PageHeader } from '@/components/common/PageHeader'
-import {
-  ShoppingCart,
-  Clock,
-  Package,
-  Tag,
-  type LucideIcon,
-} from 'lucide-react'
+import { PiShoppingCartLight, PiClockLight, PiPackageLight, PiTagLight } from 'react-icons/pi'
+import type { IconType } from 'react-icons'
 
 /* ── Types ─────────────────────────────────────────────────── */
 
 interface MetricCard {
   label: string
   value: string | null
-  Icon: LucideIcon
+  Icon: IconType
   accent: 'default' | 'warning' | 'success' | 'primary'
 }
 
 /* ── Data ──────────────────────────────────────────────────── */
 
 const METRIC_CARDS: MetricCard[] = [
-  { label: 'Total Orders',        value: null, Icon: ShoppingCart, accent: 'default'  },
-  { label: 'Pending Orders',      value: null, Icon: Clock,        accent: 'warning'  },
-  { label: 'Published Products',  value: null, Icon: Package,      accent: 'success'  },
-  { label: 'Active Discounts',    value: null, Icon: Tag,          accent: 'primary'  },
+  { label: 'Total Orders',        value: null, Icon: PiShoppingCartLight, accent: 'default'  },
+  { label: 'Pending Orders',      value: null, Icon: PiClockLight,        accent: 'warning'  },
+  { label: 'Published Products',  value: null, Icon: PiPackageLight,      accent: 'success'  },
+  { label: 'Active Discounts',    value: null, Icon: PiTagLight,          accent: 'primary'  },
 ]
 
 /* ── Styled components ────────────────────────────────────── */
@@ -134,7 +129,7 @@ export default function DashboardPage() {
             <CardTop>
               <CardLabel>{label}</CardLabel>
               <IconWrap $accent={accent} aria-hidden>
-                <Icon size={15} strokeWidth={1.75} />
+                <Icon size={15} />
               </IconWrap>
             </CardTop>
             <CardValue>

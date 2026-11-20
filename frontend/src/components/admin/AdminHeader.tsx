@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import styled, { keyframes } from 'styled-components'
-import { Bell, ChevronDown, LogOut, Menu, Settings } from 'lucide-react'
+import { PiBellLight, PiCaretDownLight, PiSignOutLight, PiListLight, PiGearSixLight } from 'react-icons/pi'
 import { useAuth } from '@/hooks/useAuth'
 
 /* ── Helpers ───────────────────────────────────────────────── */
@@ -322,14 +322,14 @@ export function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
     <HeaderRoot>
       <LeftSlot>
         <HamburgerButton onClick={onMenuToggle} aria-label="Open navigation">
-          <Menu size={18} />
+          <PiListLight size={18} />
         </HamburgerButton>
         <PageTitle>{pageTitle}</PageTitle>
       </LeftSlot>
 
       <RightSlot>
         <IconBtn aria-label="Notifications">
-          <Bell size={16} strokeWidth={1.75} />
+          <PiBellLight size={16} />
           <NotificationDot aria-hidden />
         </IconBtn>
 
@@ -344,7 +344,7 @@ export function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
             >
               <Avatar aria-hidden>{initials}</Avatar>
               <ChipEmail>{user.email}</ChipEmail>
-              <ChevronDown size={12} style={{ opacity: 0.55, marginLeft: 2 }} />
+              <PiCaretDownLight size={12} style={{ opacity: 0.55, marginLeft: 2 }} />
             </UserChip>
 
             <Dropdown $open={dropdownOpen} role="menu">
@@ -357,14 +357,14 @@ export function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
               </DropdownHeader>
 
               <DropdownItem role="menuitem" onClick={goToSettings}>
-                <Settings size={14} strokeWidth={1.75} />
+                <PiGearSixLight size={14} />
                 Store settings
               </DropdownItem>
 
               <DropdownSep />
 
               <DropdownItem className="danger" role="menuitem" onClick={handleLogout}>
-                <LogOut size={14} strokeWidth={1.75} />
+                <PiSignOutLight size={14} />
                 Sign out
               </DropdownItem>
             </Dropdown>

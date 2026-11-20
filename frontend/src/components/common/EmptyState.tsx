@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react'
 import styled from 'styled-components'
-import type { LucideIcon } from 'lucide-react'
+import type { IconType } from 'react-icons'
 
 const Wrap = styled.div`
   display: flex;
@@ -49,7 +49,7 @@ const Actions = styled.div`
 `
 
 interface EmptyStateProps {
-  icon?: LucideIcon
+  icon?: IconType
   title: string
   description?: string
   action?: ReactNode
@@ -60,7 +60,7 @@ export function EmptyState({ icon: Icon, title, description, action }: EmptyStat
     <Wrap>
       {Icon && (
         <IconWrap aria-hidden>
-          <Icon size={22} strokeWidth={1.5} />
+          <Icon size={22} />
         </IconWrap>
       )}
       <Title>{title}</Title>

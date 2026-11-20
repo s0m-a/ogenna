@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { Check, ImageIcon } from 'lucide-react'
+import { PiCheckLight, PiImageLight } from 'react-icons/pi'
 import { Modal } from '@/components/common/Modal'
 import { Button } from '@/components/common/Button'
 import { SearchInput } from '@/components/common/SearchInput'
@@ -196,10 +196,10 @@ export function MediaPicker({
           </Toolbar>
 
           {isLoading ? (
-            <EmptyState icon={ImageIcon} title="Loading…" />
+            <EmptyState icon={PiImageLight} title="Loading…" />
           ) : !data || data.items.length === 0 ? (
             <EmptyState
-              icon={ImageIcon}
+              icon={PiImageLight}
               title="No media found"
               description={search ? 'Try a different search.' : 'Upload your first asset.'}
             />
@@ -222,7 +222,7 @@ export function MediaPicker({
                     />
                     {selectedMap.has(asset.id) && (
                       <SelectedBadge aria-hidden>
-                        <Check size={14} strokeWidth={3} />
+                        <PiCheckLight size={14} />
                       </SelectedBadge>
                     )}
                   </Card>

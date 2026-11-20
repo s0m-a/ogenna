@@ -4,6 +4,7 @@ import type {
   ProductListResponse,
   ProductFilters,
   ProductFormData,
+  ProductSearchResponse,
 } from '@/types/product'
 
 function buildQuery(filters: ProductFilters): string {
@@ -29,6 +30,18 @@ export const productsService = {
   // Public storefront list
   listPublic: (filters: ProductFilters = {}) =>
     apiClient.get<ProductListResponse>(`/products${buildQuery(filters)}`),
+
+  // Public instant search (published products, ranked)
+  // Pass React Query's signal so a superseded search is aborted.
+  search: (q: string, limit = 8, signal?: AbortSignal) =>
+    apiClient.get<ProductSearchResponse>(
+      `/products/search?${new URLSearchParams({ q, limit: String(limit) })}`,
+      { signal },
+    ),
+
+  // Record a submitted search; the server works out the result count itself.
+  logSearch: (q: string) =>
+    apiClient.post<void>('/products/search/log', { q }),
 
   // Public storefront detail (by slug)
   getPublicBySlug: (slug: string) =>

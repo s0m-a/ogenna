@@ -25,9 +25,9 @@ const CONTENT = {
 /* ── Layout ──────────────────────────────────────────────── */
 
 const Section = styled.section`
-  max-width: ${({ theme }) => theme.layout.contentMaxWidth};
+  max-width: ${({ theme }) => theme.layout.wideMaxWidth};
   margin: 0 auto;
-  padding: 0.375rem ${({ theme }) => theme.layout.pagePaddingX} 1.5rem;
+  padding: 0 ${({ theme }) => theme.layout.pagePaddingXWide} 1.5rem;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     padding: 0.375rem ${({ theme }) => theme.layout.pagePaddingXMobile} 1rem;
@@ -53,7 +53,7 @@ const CopyPanel = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 5 / 4;
   padding: 3rem 2.5rem;
   background: ${({ theme }) => theme.colors.primary150};
   border-radius: ${({ theme }) => theme.radii.sm};
@@ -123,7 +123,7 @@ const ImagePanel = styled(Link)`
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 5 / 4;
   border-radius: ${({ theme }) => theme.radii.sm};
   overflow: hidden;
   text-decoration: none;

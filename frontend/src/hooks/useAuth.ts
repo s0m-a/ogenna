@@ -1,2 +1,2 @@
-export { useAuthContext as useAuth } from '@/contexts/AuthContext'
-export type { AuthUser } from '@/contexts/AuthContext'
+export { useAuthContext as useAuth, isStaffRole } from '@/contexts/AuthContext'
+export type { AuthUser, UserRole } from '@/contexts/AuthContext'

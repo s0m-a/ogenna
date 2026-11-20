@@ -11,7 +11,10 @@ import { CollectionsModule } from './collections/collections.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { CartsModule } from './carts/carts.module';
 import { MediaModule } from './media/media.module';
+import { OrdersModule } from './orders/orders.module';
+import { CustomersModule } from './customers/customers.module';
 import { envValidationSchema } from './config/env.validation';
+import { RateLimitModule } from './common/throttle/rate-limit.module';
 
 @Module({
   imports: [
@@ -22,6 +25,7 @@ import { envValidationSchema } from './config/env.validation';
         abortEarly: true,
       },
     }),
+    RateLimitModule,
     DatabaseModule,
     HealthModule,
     AuthModule,
@@ -32,6 +36,8 @@ import { envValidationSchema } from './config/env.validation';
     InventoryModule,
     CartsModule,
     MediaModule,
+    OrdersModule,
+    CustomersModule,
   ],
   controllers: [AppController],
 })

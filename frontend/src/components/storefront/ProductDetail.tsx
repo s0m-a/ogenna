@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Minus, Plus } from 'lucide-react'
+import { PiMinusLight, PiPlusLight } from 'react-icons/pi'
 import Image from 'next/image'
 import Link from 'next/link'
 import styled, { keyframes } from 'styled-components'
@@ -724,7 +724,7 @@ function ProductDetailView({
                 disabled={qty <= product.minOrderQty}
                 aria-label="Decrease quantity"
               >
-                <Minus size={14} strokeWidth={1.5} />
+                <PiMinusLight size={14} />
               </QtyBtn>
               <QtyVal>{qty}</QtyVal>
               <QtyBtn
@@ -733,7 +733,7 @@ function ProductDetailView({
                 disabled={qty >= stock}
                 aria-label="Increase quantity"
               >
-                <Plus size={14} strokeWidth={1.5} />
+                <PiPlusLight size={14} />
               </QtyBtn>
             </QtyStepper>
           </QtyRow>

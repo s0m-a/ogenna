@@ -7,6 +7,7 @@ import {
 import { CartStatus } from '@prisma/client';
 import { PrismaService } from '../database/prisma.service';
 import { InventoryService } from '../inventory/inventory.service';
+import { STORE_CURRENCY } from '../common/constants/currency';
 import { AddCartItemDto } from './dto/add-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 
@@ -339,7 +340,7 @@ export class CartsService {
     });
 
     const subtotalAmount = items.reduce((sum, i) => sum + i.lineTotalAmount, 0);
-    const currencyCode = items[0]?.currencyCode ?? 'GBP';
+    const currencyCode = items[0]?.currencyCode ?? STORE_CURRENCY;
 
     return {
       id: cart.id,

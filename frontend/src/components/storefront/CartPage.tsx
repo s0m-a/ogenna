@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import styled from 'styled-components'
-import { Minus, Plus, Trash2 } from 'lucide-react'
+import { PiMinusLight, PiPlusLight, PiTrashLight } from 'react-icons/pi'
 import { useCart, useCartMutations } from '@/hooks/useCart'
 import { CartUpsell } from './CartUpsell'
 
@@ -200,17 +200,20 @@ const Note = styled.p`
   color: ${({ theme }) => theme.colors.textSecondary};
 `
 
-const CheckoutBtn = styled.button`
+const CheckoutBtn = styled(Link)`
   padding: 1rem;
-  background: ${({ theme }) => theme.colors.clay};
+  text-align: center;
+  background: ${({ theme }) => theme.colors.terracotta};
   color: ${({ theme }) => theme.colors.textInverse};
   border-radius: ${({ theme }) => theme.radii.full};
   font-family: ${({ theme }) => theme.fonts.nav};
   font-size: ${({ theme }) => theme.fontSizes.sm};
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  cursor: not-allowed;
-  opacity: 0.6;
+  text-decoration: none;
+  transition: background ${({ theme }) => theme.transitions.fast};
+
+  &:hover { background: ${({ theme }) => theme.colors.terracottaDark}; }
 `
 
 const ContinueLink = styled(Link)`
@@ -299,7 +302,7 @@ export function CartPage() {
                           disabled={item.quantity <= minOrderQty}
                           aria-label="Decrease quantity"
                         >
-                          <Minus size={14} strokeWidth={1.5} />
+                          <PiMinusLight size={14} />
                         </QtyBtn>
                         <QtyVal>{item.quantity}</QtyVal>
                         <QtyBtn
@@ -309,7 +312,7 @@ export function CartPage() {
                           }
                           aria-label="Increase quantity"
                         >
-                          <Plus size={14} strokeWidth={1.5} />
+                          <PiPlusLight size={14} />
                         </QtyBtn>
                       </QtyRow>
                       <RemoveBtn
@@ -317,7 +320,7 @@ export function CartPage() {
                         onClick={() => remove.mutate(item.id)}
                         aria-label={`Remove ${item.variant.product.name}`}
                       >
-                        <Trash2 size={18} strokeWidth={1.5} />
+                        <PiTrashLight size={18} />
                       </RemoveBtn>
                     </Item>
                   )
@@ -341,9 +344,7 @@ export function CartPage() {
                 <span>{formatCents(cart?.subtotalAmount ?? 0)}</span>
               </Total>
               <Note>Tax included where applicable.</Note>
-              <CheckoutBtn type="button" disabled title="Checkout coming soon">
-                Checkout coming soon
-              </CheckoutBtn>
+              <CheckoutBtn href="/checkout">Checkout</CheckoutBtn>
               <ContinueLink href="/shop">Continue shopping</ContinueLink>
             </Summary>
           </>

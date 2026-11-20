@@ -1,7 +1,7 @@
 'use client'
 
 import styled from 'styled-components'
-import { ImageOff } from 'lucide-react'
+import { PiImageBrokenLight } from 'react-icons/pi'
 import { thumb } from '@/lib/cloudinary'
 
 const Wrap = styled.div<{ $size: number; $rounded: boolean; $fit: 'cover' | 'contain' }>`
@@ -42,7 +42,7 @@ export function MediaThumb({
   if (!src) {
     return (
       <Wrap $size={size} $rounded={rounded} $fit={fit} aria-hidden>
-        <ImageOff size={Math.round(size * 0.3)} strokeWidth={1.5} />
+        <PiImageBrokenLight size={Math.round(size * 0.3)} />
       </Wrap>
     )
   }

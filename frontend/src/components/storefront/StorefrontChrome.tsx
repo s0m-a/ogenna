@@ -25,7 +25,7 @@ export function StorefrontChrome({ children }: { children: React.ReactNode }) {
   return (
     <CartDrawerProvider>
       <Shell>
-        <AnnouncementMarquee />
+        {/* <AnnouncementMarquee /> */}
         <ServiceBanner />
         <LocaleBar />
         <StorefrontHeader />

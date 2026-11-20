@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import styled from 'styled-components'
-import { ShoppingBag } from 'lucide-react'
+import { PiShoppingBagLight } from 'react-icons/pi'
 import { usePublicProducts } from '@/hooks/useProducts'
 import { useCart, useCartMutations } from '@/hooks/useCart'
 import type { ProductListItem } from '@/types/product'
@@ -139,7 +139,7 @@ export function CartUpsell() {
                   add.mutate({ variantId: p.defaultVariantId, quantity: 1 })
                 }
               >
-                <ShoppingBag size={12} strokeWidth={1.75} />
+                <PiShoppingBagLight size={12} />
                 Add to cart
               </AddBtn>
             </Tile>

@@ -1,7 +1,7 @@
 'use client'
 
 import styled from 'styled-components'
-import { ChevronDown } from 'lucide-react'
+import { PiCaretDownLight } from 'react-icons/pi'
 
 // Display-only for now. Switching logic is a later milestone.
 const Wrap = styled.div`
@@ -54,12 +54,12 @@ export function LocaleBar() {
     <Wrap>
       <Selector type="button" aria-label="Change language">
         English
-        <ChevronDown size={12} strokeWidth={2} />
+        <PiCaretDownLight size={12} />
       </Selector>
       <Selector type="button" aria-label="Change currency">
         <Flag aria-hidden />
         NGN ₦
-        <ChevronDown size={12} strokeWidth={2} />
+        <PiCaretDownLight size={12} />
       </Selector>
     </Wrap>
   )

@@ -2,16 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
-import {
-  AlertCircle,
-  Check,
-  ChevronRight,
-  FolderOpen,
-  MoreHorizontal,
-  Plus,
-  Trash2,
-  X,
-} from 'lucide-react'
+import { PiWarningCircleLight, PiCheckLight, PiCaretRightLight, PiFolderOpenLight, PiDotsThreeLight, PiPlusLight, PiTrashLight, PiXLight } from 'react-icons/pi'
 
 import { PageHeader } from '@/components/common/PageHeader'
 import { Button } from '@/components/common/Button'
@@ -195,14 +186,14 @@ function RowMenu({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => voi
   return (
     <ActionWrap ref={ref}>
       <ActionBtn onClick={() => setOpen((v) => !v)} aria-label="Category actions">
-        <MoreHorizontal size={15} />
+        <PiDotsThreeLight size={15} />
       </ActionBtn>
       {open && (
         <Menu>
           <MenuItem onClick={() => { setOpen(false); onEdit() }}>Edit</MenuItem>
           <MenuSep />
           <MenuItem className="danger" onClick={() => { setOpen(false); onDelete() }}>
-            <Trash2 size={13} strokeWidth={1.75} /> Archive
+            <PiTrashLight size={13} /> Archive
           </MenuItem>
         </Menu>
       )}
@@ -438,12 +429,12 @@ function CategoryPanel({ editing, categories, onClose }: CategoryPanelProps) {
       <Panel role="dialog" aria-modal aria-label={editing ? 'Edit category' : 'New category'}>
         <PanelHeader>
           <PanelTitle>{editing ? 'Edit category' : 'New category'}</PanelTitle>
-          <CloseBtn onClick={onClose} aria-label="Close"><X size={16} /></CloseBtn>
+          <CloseBtn onClick={onClose} aria-label="Close"><PiXLight size={16} /></CloseBtn>
         </PanelHeader>
         <PanelBody>
           {feedback && (
             <Banner $type={feedback.type}>
-              {feedback.type === 'success' ? <Check size={14} /> : <AlertCircle size={14} />}
+              {feedback.type === 'success' ? <PiCheckLight size={14} /> : <PiWarningCircleLight size={14} />}
               {feedback.message}
             </Banner>
           )}
@@ -522,7 +513,7 @@ export default function CategoriesPage() {
         subtitle="Organise your fabric catalogue into categories."
         actions={
           <Button $variant="primary" $size="sm" onClick={openNew}>
-            <Plus size={14} strokeWidth={2.5} /> Add category
+            <PiPlusLight size={14} /> Add category
           </Button>
         }
       />
@@ -559,12 +550,12 @@ export default function CategoriesPage() {
                 <tr>
                   <Td colSpan={4}>
                     <EmptyState
-                      icon={FolderOpen}
+                      icon={PiFolderOpenLight}
                       title="No categories yet"
                       description="Create your first category to start organising your catalogue."
                       action={
                         <Button $variant="primary" $size="sm" onClick={openNew}>
-                          <Plus size={14} /> Add category
+                          <PiPlusLight size={14} /> Add category
                         </Button>
                       }
                     />
@@ -594,7 +585,7 @@ export default function CategoriesPage() {
                       <SubRow key={child.id}>
                         <SubTd>
                           <ParentChip>
-                            <ChevronRight size={12} />
+                            <PiCaretRightLight size={12} />
                             <CategoryName onClick={() => openEdit(child)}>{child.name}</CategoryName>
                           </ParentChip>
                         </SubTd>

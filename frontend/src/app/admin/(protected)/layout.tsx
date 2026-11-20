@@ -28,15 +28,16 @@ const LoadingSpinner = styled.div`
 `
 
 export default function AdminRootLayout({ children }: { children: React.ReactNode }) {
-  const { user, isLoading } = useAuth()
+  const { user, isStaff, isLoading } = useAuth()
   const router = useRouter()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
-    if (!isLoading && !user) {
+    // Customers are signed in too, but the admin area is staff-only.
+    if (!isLoading && (!user || !isStaff)) {
       router.replace('/admin/login')
     }
-  }, [isLoading, user, router])
+  }, [isLoading, user, isStaff, router])
 
   if (isLoading) {
     return (
@@ -46,7 +47,7 @@ export default function AdminRootLayout({ children }: { children: React.ReactNod
     )
   }
 
-  if (!user) return null
+  if (!user || !isStaff) return null
 
   return (
     <AdminLayout

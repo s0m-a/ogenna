@@ -4,14 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import styled, { css } from 'styled-components'
-import {
-  AlertCircle,
-  Check,
-  ImagePlus,
-  Plus,
-  Trash2,
-  X,
-} from 'lucide-react'
+import { PiWarningCircleLight, PiCheckLight, PiImageSquareLight, PiPlusLight, PiTrashLight, PiXLight } from 'react-icons/pi'
 
 import { Button } from '@/components/common/Button'
 import { PageHeader } from '@/components/common/PageHeader'
@@ -959,7 +952,7 @@ export function ProductForm({ productId }: ProductFormProps) {
 
       {feedback && (
         <Banner $type={feedback.type}>
-          {feedback.type === 'success' ? <Check size={14} /> : <AlertCircle size={14} />}
+          {feedback.type === 'success' ? <PiCheckLight size={14} /> : <PiWarningCircleLight size={14} />}
           {feedback.message}
         </Banner>
       )}
@@ -1048,7 +1041,7 @@ export function ProductForm({ productId }: ProductFormProps) {
                       onClick={() => removeProductImage(idx)}
                       aria-label="Remove image"
                     >
-                      <X size={13} />
+                      <PiXLight size={13} />
                     </TileRemove>
                   </Tile>
                 ))}
@@ -1057,7 +1050,7 @@ export function ProductForm({ productId }: ProductFormProps) {
                   onClick={() => openPicker({ kind: 'product' })}
                   aria-label="Add image"
                 >
-                  <ImagePlus size={22} strokeWidth={1.5} />
+                  <PiImageSquareLight size={22} />
                 </AddTile>
               </Gallery>
             </CardBody>
@@ -1248,7 +1241,7 @@ export function ProductForm({ productId }: ProductFormProps) {
                                         onClick={() => removeVariantImage(v._localId, 0)}
                                         aria-label="Remove variant image"
                                       >
-                                        <X size={12} />
+                                        <PiXLight size={12} />
                                       </DeleteRowBtn>
                                     </div>
                                   ) : (
@@ -1258,7 +1251,7 @@ export function ProductForm({ productId }: ProductFormProps) {
                                         openPicker({ kind: 'variant', variantLocalId: v._localId })
                                       }
                                     >
-                                      <ImagePlus size={12} /> Add
+                                      <PiImageSquareLight size={12} /> Add
                                     </VariantImageButton>
                                   )}
                                 </VTd>
@@ -1315,7 +1308,7 @@ export function ProductForm({ productId }: ProductFormProps) {
                                     aria-label={`Remove ${v.name || 'variant'}`}
                                     disabled={form.variants.length === 1}
                                   >
-                                    <Trash2 size={13} />
+                                    <PiTrashLight size={13} />
                                   </DeleteRowBtn>
                                 </VTd>
                               </tr>
@@ -1331,7 +1324,7 @@ export function ProductForm({ productId }: ProductFormProps) {
                         type="button"
                         onClick={addVariant}
                       >
-                        <Plus size={14} style={{ marginRight: '0.25rem' }} />
+                        <PiPlusLight size={14} style={{ marginRight: '0.25rem' }} />
                         Add variant
                       </Button>
                     </AddVariantBar>

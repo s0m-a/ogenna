@@ -3,18 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import styled, { keyframes } from 'styled-components'
-import {
-  AlertTriangle,
-  ArrowDownCircle,
-  ArrowUpCircle,
-  Check,
-  ChevronDown,
-  ChevronUp,
-  Clock,
-  Package,
-  SlidersHorizontal,
-  X,
-} from 'lucide-react'
+import { PiWarningLight, PiArrowCircleDownLight, PiArrowCircleUpLight, PiCheckLight, PiCaretDownLight, PiCaretUpLight, PiClockLight, PiPackageLight, PiSlidersHorizontalLight, PiXLight } from 'react-icons/pi'
 
 import { PageHeader } from '@/components/common/PageHeader'
 import { Button } from '@/components/common/Button'
@@ -568,7 +557,7 @@ function AdjustModal({ item, onClose }: AdjustModalProps) {
 
         {success && (
           <SuccessBanner>
-            <Check size={14} /> Stock updated successfully.
+            <PiCheckLight size={14} /> Stock updated successfully.
           </SuccessBanner>
         )}
 
@@ -578,14 +567,14 @@ function AdjustModal({ item, onClose }: AdjustModalProps) {
             $type="add"
             onClick={() => setDirection('add')}
           >
-            <ArrowUpCircle size={14} strokeWidth={1.75} /> Add stock
+            <PiArrowCircleUpLight size={14} /> Add stock
           </DirBtn>
           <DirBtn
             $active={direction === 'remove'}
             $type="remove"
             onClick={() => setDirection('remove')}
           >
-            <ArrowDownCircle size={14} strokeWidth={1.75} /> Remove stock
+            <PiArrowCircleDownLight size={14} /> Remove stock
           </DirBtn>
         </DirRow>
 
@@ -667,7 +656,7 @@ function MovementHistoryPanel({ item, onClose }: HistoryPanelProps) {
             </HistorySub>
           </div>
           <CloseBtn onClick={onClose} aria-label="Close">
-            <X size={16} />
+            <PiXLight size={16} />
           </CloseBtn>
         </HistoryHeader>
 
@@ -693,14 +682,14 @@ function MovementHistoryPanel({ item, onClose }: HistoryPanelProps) {
               <HistoryItem key={mv.id}>
                 <DeltaBadge $positive={positive}>
                   {positive
-                    ? <ArrowUpCircle size={16} strokeWidth={1.75} />
-                    : <ArrowDownCircle size={16} strokeWidth={1.75} />}
+                    ? <PiArrowCircleUpLight size={16} />
+                    : <PiArrowCircleDownLight size={16} />}
                 </DeltaBadge>
                 <HistoryMeta>
                   <HistoryReason>{MOVEMENT_REASON_LABELS[mv.reason]}</HistoryReason>
                   {mv.note && <HistoryNote>{mv.note}</HistoryNote>}
                   <HistoryDate>
-                    <Clock size={10} /> {formatDate(mv.createdAt)}
+                    <PiClockLight size={10} /> {formatDate(mv.createdAt)}
                   </HistoryDate>
                 </HistoryMeta>
                 <DeltaNum $positive={positive}>
@@ -758,11 +747,11 @@ export default function InventoryPage() {
           $active={lowStockOnly}
           onClick={() => { setLowStockOnly((v) => !v); setPage(1) }}
         >
-          <AlertTriangle size={13} strokeWidth={2} />
+          <PiWarningLight size={13} />
           Low stock only
           {lowStockOnly
-            ? <ChevronUp size={12} />
-            : <ChevronDown size={12} />}
+            ? <PiCaretUpLight size={12} />
+            : <PiCaretDownLight size={12} />}
         </FilterToggle>
       </Toolbar>
 
@@ -813,7 +802,7 @@ export default function InventoryPage() {
                 <tr>
                   <Td colSpan={8}>
                     <EmptyState
-                      icon={Package}
+                      icon={PiPackageLight}
                       title={
                         debouncedSearch || lowStockOnly
                           ? 'No items match your filters'
@@ -865,11 +854,11 @@ export default function InventoryPage() {
                     <Td>
                       <RowActions>
                         <ActionBtn onClick={() => setAdjustTarget(item)}>
-                          <SlidersHorizontal size={12} strokeWidth={1.75} />
+                          <PiSlidersHorizontalLight size={12} />
                           Adjust
                         </ActionBtn>
                         <ActionBtn onClick={() => setHistoryTarget(item)}>
-                          <Clock size={12} strokeWidth={1.75} />
+                          <PiClockLight size={12} />
                           History
                         </ActionBtn>
                       </RowActions>

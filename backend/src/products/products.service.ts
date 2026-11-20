@@ -9,10 +9,36 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { AdminProductQueryDto, ProductQueryDto, SortBy } from './dto/product-query.dto';
 import { PRODUCT_LIST_INCLUDE, PRODUCT_DETAIL_INCLUDE } from './products.constants';
+import { ProductSearchService } from './product-search.service';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly productSearch: ProductSearchService,
+  ) {}
+
+  /** Instant search results: published products only, best match first. */
+  async searchPublished(q: string, limit: number = 8) {
+    const ids = await this.productSearch.matchIds(q, {
+      status: ProductStatus.PUBLISHED,
+      limit,
+    });
+    return { data: await this.findListItemsInOrder(ids) };
+  }
+
+  /** Loads list items for `ids`, keeping the order of `ids`. */
+  private async findListItemsInOrder(ids: string[]) {
+    if (!ids.length) return [];
+    const items = await this.prisma.product.findMany({
+      where: { id: { in: ids } },
+      include: PRODUCT_LIST_INCLUDE,
+    });
+    const position = new Map(ids.map((id, i) => [id, i]));
+    return items
+      .sort((a, b) => position.get(a.id)! - position.get(b.id)!)
+      .map((p) => this.shapeListItem(p));
+  }
 
   async findAll(query: ProductQueryDto) {
     return this.buildProductList(query, ProductStatus.PUBLISHED);
@@ -35,7 +61,7 @@ export class ProductsService {
       collectionSlug,
       isFeatured,
       onSale,
-      sortBy = SortBy.CREATED_AT,
+      sortBy,
       sortOrder = 'desc',
       minPrice,
       maxPrice,
@@ -46,12 +72,11 @@ export class ProductsService {
       ...(status ? { status } : {}),
     };
 
+    // Ranked ids from Postgres search; the other filters still apply on top.
+    let rankedIds: string[] | null = null;
     if (search) {
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
-        { fabricType: { contains: search, mode: 'insensitive' } },
-      ];
+      rankedIds = await this.productSearch.matchIds(search, { status });
+      where.id = { in: rankedIds };
     }
 
     if (isFeatured !== undefined) {
@@ -88,6 +113,10 @@ export class ProductsService {
       };
     }
 
+    if (rankedIds && (!sortBy || sortBy === SortBy.RELEVANCE)) {
+      return this.buildRelevancePage(where, rankedIds, page, limit);
+    }
+
     let orderBy: Prisma.ProductOrderByWithRelationInput;
 
     if (sortBy === SortBy.NAME) {
@@ -119,6 +148,32 @@ export class ProductsService {
         page,
         limit,
         totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  /**
+   * Paginates search results in relevance order, which Prisma can't express
+   * as an orderBy. Fine at catalogue scale: matches are capped at 500 ids.
+   */
+  private async buildRelevancePage(
+    where: Prisma.ProductWhereInput,
+    rankedIds: string[],
+    page: number,
+    limit: number,
+  ) {
+    const matching = await this.prisma.product.findMany({ where, select: { id: true } });
+    const keep = new Set(matching.map((p) => p.id));
+    const ordered = rankedIds.filter((id) => keep.has(id));
+    const skip = (page - 1) * limit;
+
+    return {
+      data: await this.findListItemsInOrder(ordered.slice(skip, skip + limit)),
+      meta: {
+        total: ordered.length,
+        page,
+        limit,
+        totalPages: Math.ceil(ordered.length / limit),
       },
     };
   }

@@ -18,7 +18,7 @@ const makeVariant = (overrides: any = {}) => ({
   isActive: true,
   priceAmount: 895,
   salePriceAmount: null,
-  currencyCode: 'GBP',
+  currencyCode: 'NGN',
   attributes: { colour: 'White' },
   images: [],
   product: {
@@ -39,7 +39,7 @@ const makeCartItem = (overrides: any = {}) => ({
   variantId: 'var-1',
   quantity: 2,
   unitPriceAmount: 895,
-  currencyCode: 'GBP',
+  currencyCode: 'NGN',
   createdAt: new Date(),
   updatedAt: new Date(),
   variant: makeVariant(),

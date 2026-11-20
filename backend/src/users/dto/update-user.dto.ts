@@ -1,5 +1,6 @@
 import { UserRole } from '@prisma/client';
-import { IsBoolean, IsEnum, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { STAFF_ROLES } from '../staff-roles';
+import { IsBoolean, IsIn, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class UpdateUserDto {
   @IsOptional()
@@ -9,7 +10,8 @@ export class UpdateUserDto {
   name?: string;
 
   @IsOptional()
-  @IsEnum(UserRole)
+  // Staff management only — customer accounts are created through Google sign-in.
+  @IsIn(STAFF_ROLES)
   role?: UserRole;
 
   @IsOptional()

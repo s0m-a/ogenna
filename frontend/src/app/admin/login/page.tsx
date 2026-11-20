@@ -10,7 +10,8 @@ import type { Metadata } from 'next'
 /* ── Component ─────────────────────────────────────────────── */
 
 export default function LoginPage() {
-  const { login, isLoading: authLoading, user } = useAuth()
+  const { login, isLoading: authLoading, user, isStaff } = useAuth()
+  const staffUser = user && isStaff ? user : null
   const router = useRouter()
 
   const [email, setEmail] = useState('')
@@ -19,10 +20,10 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
-    if (!authLoading && user) {
+    if (!authLoading && staffUser) {
       router.replace('/admin/dashboard')
     }
-  }, [authLoading, user, router])
+  }, [authLoading, staffUser, router])
 
   if (authLoading) {
     return (
@@ -32,7 +33,7 @@ export default function LoginPage() {
     )
   }
 
-  if (user) return null
+  if (staffUser) return null
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

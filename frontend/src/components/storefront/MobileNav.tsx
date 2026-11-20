@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import styled from 'styled-components'
-import { ChevronRight, X } from 'lucide-react'
+import { PiCaretRightLight, PiXLight } from 'react-icons/pi'
 import { usePublicCategories } from '@/hooks/useCategories'
 
 interface MobileNavProps {
@@ -123,7 +123,7 @@ export function MobileNav({ open, onClose, items }: MobileNavProps) {
       <Drawer $open={open} aria-label="Mobile navigation" aria-hidden={!open}>
         <DrawerHead>
           <CloseBtn onClick={onClose} aria-label="Close menu">
-            <X size={18} />
+            <PiXLight size={18} />
           </CloseBtn>
         </DrawerHead>
 
@@ -131,7 +131,7 @@ export function MobileNav({ open, onClose, items }: MobileNavProps) {
           {items.map((item) => (
             <TopItem key={item.href} href={item.href} onClick={onClose}>
               {item.label}
-              <ChevronRight size={14} />
+              <PiCaretRightLight size={14} />
             </TopItem>
           ))}
 

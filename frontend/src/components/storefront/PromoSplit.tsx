@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import styled from 'styled-components'
-import { Heart } from 'lucide-react'
+import { PiHeartLight } from 'react-icons/pi'
 
 // TODO: wire grid tiles to admin "promo" assets once the Storefront Editor lands (Milestone 5).
 const GRID_IMAGES = [
@@ -191,7 +191,7 @@ export function PromoSplit() {
                   aria-label={`Save ${img.alt} to wishlist`}
                   /* TODO: wire to wishlist when the account/wishlist flow ships */
                 >
-                  <Heart size={18} strokeWidth={2} fill="currentColor" />
+                  <PiHeartLight size={18} fill="currentColor" />
                 </HeartButton>
               )}
             </Tile>

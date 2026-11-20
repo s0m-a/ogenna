@@ -2,7 +2,7 @@
 
 import { useRef } from 'react'
 import styled from 'styled-components'
-import { Search, X } from 'lucide-react'
+import { PiMagnifyingGlassLight, PiXLight } from 'react-icons/pi'
 
 const Wrap = styled.div`
   position: relative;
@@ -76,7 +76,7 @@ export function SearchInput({
   return (
     <Wrap className={className}>
       <IconLeft aria-hidden>
-        <Search size={14} strokeWidth={2} />
+        <PiMagnifyingGlassLight size={14} />
       </IconLeft>
       <Input
         ref={ref}
@@ -91,7 +91,7 @@ export function SearchInput({
           onClick={() => { onChange(''); ref.current?.focus() }}
           aria-label="Clear search"
         >
-          <X size={10} strokeWidth={2.5} />
+          <PiXLight size={10} />
         </ClearBtn>
       )}
     </Wrap>

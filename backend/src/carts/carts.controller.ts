@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { OptionalJwtGuard } from '../common/guards/optional-jwt.guard';
+import { STORE_CURRENCY } from '../common/constants/currency';
 import { CartsService } from './carts.service';
 import { AddCartItemDto } from './dto/add-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
@@ -54,7 +55,7 @@ export class CartsController {
     if (userId) return this.cartsService.getForUser(userId);
 
     if (!guestToken) {
-      return { id: null, items: [], itemCount: 0, subtotalAmount: 0, currencyCode: 'GBP' };
+      return { id: null, items: [], itemCount: 0, subtotalAmount: 0, currencyCode: STORE_CURRENCY };
     }
 
     return this.cartsService.getForGuest(guestToken);

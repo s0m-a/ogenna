@@ -44,6 +44,11 @@ export interface ProductListResponse {
   meta: ProductListMeta
 }
 
+/** GET /products/search — instant results, best match first. */
+export interface ProductSearchResponse {
+  data: ProductListItem[]
+}
+
 export interface ProductFilters {
   search?: string
   status?: ProductStatus | ''
@@ -52,7 +57,8 @@ export interface ProductFilters {
   onSale?: boolean
   page?: number
   limit?: number
-  sortBy?: 'createdAt' | 'name' | 'price'
+  /** 'relevance' only applies together with `search`. */
+  sortBy?: 'createdAt' | 'name' | 'price' | 'relevance'
   sortOrder?: 'asc' | 'desc'
 }
 

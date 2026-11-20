@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { cartService } from '@/services/cart'
 import { getCartToken, setCartToken } from '@/lib/cartToken'
+import { useAuth } from '@/hooks/useAuth'
 import type { Cart } from '@/types/cart'
 
 export const CART_KEY = 'cart'
@@ -17,11 +18,12 @@ const EMPTY_CART: Cart = {
 }
 
 export function useCart() {
+  const { user, isLoading: authLoading } = useAuth()
   return useQuery({
     queryKey: [CART_KEY],
     queryFn: () => cartService.get(),
-    // Don't hit the network for visitors that have never added anything.
-    enabled: typeof window !== 'undefined' && Boolean(getCartToken()),
+    enabled:
+      typeof window !== 'undefined' && !authLoading && (Boolean(user) || Boolean(getCartToken())),
     staleTime: 30_000,
     placeholderData: EMPTY_CART,
   })

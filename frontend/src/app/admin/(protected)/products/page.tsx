@@ -4,17 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import styled, { css, keyframes } from 'styled-components'
-import {
-  MoreHorizontal,
-  Package,
-  Plus,
-  Copy,
-  Edit2,
-  Eye,
-  EyeOff,
-  Archive,
-  Trash2,
-} from 'lucide-react'
+import { PiDotsThreeLight, PiPackageLight, PiPlusLight, PiCopyLight, PiPencilSimpleLight, PiEyeLight, PiEyeSlashLight, PiArchiveLight, PiTrashLight } from 'react-icons/pi'
 
 import { PageHeader } from '@/components/common/PageHeader'
 import { Button } from '@/components/common/Button'
@@ -361,35 +351,35 @@ function RowMenu({ product, onEdit, onDuplicate, onPublish, onUnpublish, onArchi
         aria-haspopup="true"
         aria-expanded={open}
       >
-        <MoreHorizontal size={15} />
+        <PiDotsThreeLight size={15} />
       </ActionBtn>
       {open && (
         <Menu role="menu">
           <MenuItem role="menuitem" onClick={() => { close(); onEdit() }}>
-            <Edit2 size={13} strokeWidth={1.75} /> Edit
+            <PiPencilSimpleLight size={13} /> Edit
           </MenuItem>
           <MenuItem role="menuitem" onClick={() => { close(); onDuplicate() }}>
-            <Copy size={13} strokeWidth={1.75} /> Duplicate
+            <PiCopyLight size={13} /> Duplicate
           </MenuItem>
           <MenuSep />
           {product.status !== 'PUBLISHED' && (
             <MenuItem role="menuitem" onClick={() => { close(); onPublish() }}>
-              <Eye size={13} strokeWidth={1.75} /> Publish
+              <PiEyeLight size={13} /> Publish
             </MenuItem>
           )}
           {product.status === 'PUBLISHED' && (
             <MenuItem role="menuitem" onClick={() => { close(); onUnpublish() }}>
-              <EyeOff size={13} strokeWidth={1.75} /> Unpublish
+              <PiEyeSlashLight size={13} /> Unpublish
             </MenuItem>
           )}
           {product.status !== 'ARCHIVED' && (
             <MenuItem role="menuitem" onClick={() => { close(); onArchive() }}>
-              <Archive size={13} strokeWidth={1.75} /> Archive
+              <PiArchiveLight size={13} /> Archive
             </MenuItem>
           )}
           <MenuSep />
           <MenuItem className="danger" role="menuitem" onClick={() => { close(); onDelete() }}>
-            <Trash2 size={13} strokeWidth={1.75} /> Delete
+            <PiTrashLight size={13} /> Delete
           </MenuItem>
         </Menu>
       )}
@@ -487,7 +477,7 @@ export default function ProductsPage() {
         subtitle="Manage your fabric catalogue."
         actions={
           <LinkButton href="/admin/products/new" $variant="primary" $size="sm">
-            <Plus size={14} strokeWidth={2.5} />
+            <PiPlusLight size={14} />
             Add product
           </LinkButton>
         }
@@ -561,7 +551,7 @@ export default function ProductsPage() {
                 <tr>
                   <Td colSpan={8}>
                     <EmptyState
-                      icon={Package}
+                      icon={PiPackageLight}
                       title={debouncedSearch || statusFilter ? 'No products match your filters' : 'No products yet'}
                       description={
                         debouncedSearch || statusFilter
@@ -571,7 +561,7 @@ export default function ProductsPage() {
                       action={
                         !debouncedSearch && !statusFilter ? (
                           <LinkButton href="/admin/products/new" $variant="primary" $size="sm">
-                            <Plus size={14} /> Add product
+                            <PiPlusLight size={14} /> Add product
                           </LinkButton>
                         ) : undefined
                       }
@@ -596,7 +586,7 @@ export default function ProductsPage() {
                           />
                         ) : (
                           <ImgPlaceholder aria-hidden>
-                            <Package size={16} strokeWidth={1.5} />
+                            <PiPackageLight size={16} />
                           </ImgPlaceholder>
                         )}
                       </ImgWrap>

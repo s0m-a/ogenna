@@ -14,6 +14,8 @@ export enum SortBy {
   NAME = 'name',
   CREATED_AT = 'createdAt',
   PRICE = 'price',
+  /** Only meaningful with `search`; the default whenever a search is given. */
+  RELEVANCE = 'relevance',
 }
 
 export enum SortOrder {
@@ -59,7 +61,7 @@ export class ProductQueryDto {
 
   @IsOptional()
   @IsEnum(SortBy)
-  sortBy?: SortBy = SortBy.CREATED_AT;
+  sortBy?: SortBy;
 
   @IsOptional()
   @IsEnum(SortOrder)

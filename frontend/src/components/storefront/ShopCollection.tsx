@@ -3,7 +3,7 @@
 import { Fragment, useMemo, useState } from 'react'
 import Link from 'next/link'
 import styled, { keyframes } from 'styled-components'
-import { ChevronRight } from 'lucide-react'
+import { PiCaretRightLight } from 'react-icons/pi'
 import { usePublicProducts } from '@/hooks/useProducts'
 import { usePublicCategories } from '@/hooks/useCategories'
 import { ProductCard } from './ProductCard'
@@ -12,12 +12,14 @@ import type { ProductFilters } from '@/types/product'
 
 interface ShopCollectionProps {
   categorySlug?: string
+  /** Search term from /shop?q=; results default to relevance order. */
+  search?: string
   onSale?: boolean
   titleOverride?: string
   trail?: Array<{ label: string; href?: string }>
 }
 
-type Sort = 'newest' | 'oldest' | 'nameAsc' | 'priceAsc' | 'priceDesc'
+type Sort = 'relevance' | 'newest' | 'oldest' | 'nameAsc' | 'priceAsc' | 'priceDesc'
 type Availability = 'all' | 'inStock'
 
 const PAGE_SIZE = 16
@@ -30,8 +32,11 @@ const SORT_OPTIONS: Array<{ value: Sort; label: string }> = [
   { value: 'priceDesc', label: 'Price, high to low' },
 ]
 
+const RELEVANCE_OPTION = { value: 'relevance' as const, label: 'Best match' }
+
 function sortToFilter(sort: Sort): Pick<ProductFilters, 'sortBy' | 'sortOrder'> {
   switch (sort) {
+    case 'relevance': return { sortBy: 'relevance' }
     case 'oldest':    return { sortBy: 'createdAt', sortOrder: 'asc' }
     case 'nameAsc':   return { sortBy: 'name',      sortOrder: 'asc' }
     case 'priceAsc':  return { sortBy: 'price',     sortOrder: 'asc' }
@@ -254,20 +259,22 @@ const PageBtn = styled.button<{ $active?: boolean }>`
 
 /* ── Component ───────────────────────────────────────────── */
 
-export function ShopCollection({ categorySlug, onSale, titleOverride, trail = [] }: ShopCollectionProps) {
-  const [sort, setSort] = useState<Sort>('newest')
+export function ShopCollection({ categorySlug, search, onSale, titleOverride, trail = [] }: ShopCollectionProps) {
+  const [sort, setSort] = useState<Sort>(search ? 'relevance' : 'newest')
+  const sortOptions = search ? [RELEVANCE_OPTION, ...SORT_OPTIONS] : SORT_OPTIONS
   const [availability, setAvailability] = useState<Availability>('all')
   const [page, setPage] = useState(1)
 
   const filters = useMemo<ProductFilters>(
     () => ({
       categorySlug,
+      search,
       onSale,
       page,
       limit: PAGE_SIZE,
       ...sortToFilter(sort),
     }),
-    [categorySlug, onSale, page, sort],
+    [categorySlug, search, onSale, page, sort],
   )
 
   const { data, isLoading } = usePublicProducts(filters)
@@ -275,15 +282,20 @@ export function ShopCollection({ categorySlug, onSale, titleOverride, trail = []
 
   const resolvedTitle = useMemo(() => {
     if (titleOverride) return titleOverride
+    if (search) return `Results for “${search}”`
     if (!categorySlug) return 'All fabrics'
     const match = categories?.find((c) => c.slug === categorySlug)
     return match?.name ?? categorySlug.replace(/-/g, ' ')
-  }, [titleOverride, categorySlug, categories])
-
-  const description = getCategoryDescription(categorySlug)
+  }, [titleOverride, search, categorySlug, categories])
 
   const items = data?.data ?? []
   const meta = data?.meta
+
+  const description = search
+    ? meta
+      ? `${meta.total} ${meta.total === 1 ? 'fabric' : 'fabrics'} found`
+      : 'Searching…'
+    : getCategoryDescription(categorySlug)
 
   // Availability is applied client-side until the backend exposes a stock filter.
   const visible = availability === 'inStock'
@@ -316,8 +328,14 @@ export function ShopCollection({ categorySlug, onSale, titleOverride, trail = []
         <HeaderInner>
           <Crumbs aria-label="Breadcrumb">
             <Link href="/">Home</Link>
-            <ChevronRight size={12} strokeWidth={1.5} aria-hidden />
-            {trail.length === 0 ? (
+            <PiCaretRightLight size={12} aria-hidden />
+            {search ? (
+              <>
+                <Link href="/shop">Shop</Link>
+                <PiCaretRightLight size={12} aria-hidden />
+                <span aria-current="page">Search</span>
+              </>
+            ) : trail.length === 0 ? (
               <span aria-current="page">Shop</span>
             ) : (
               <>
@@ -326,7 +344,7 @@ export function ShopCollection({ categorySlug, onSale, titleOverride, trail = []
                   const isLast = idx === trail.length - 1
                   return (
                     <Fragment key={crumb.label}>
-                      <ChevronRight size={12} strokeWidth={1.5} aria-hidden />
+                      <PiCaretRightLight size={12} aria-hidden />
                       {isLast || !crumb.href ? (
                         <span aria-current={isLast ? 'page' : undefined}>{crumb.label}</span>
                       ) : (
@@ -357,7 +375,7 @@ export function ShopCollection({ categorySlug, onSale, titleOverride, trail = []
           <ControlGroup>
             <ControlLabel>Sort by</ControlLabel>
             <Select value={sort} onChange={handleSortChange} aria-label="Sort by">
-              {SORT_OPTIONS.map((opt) => (
+              {sortOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
             </Select>
@@ -375,7 +393,11 @@ export function ShopCollection({ categorySlug, onSale, titleOverride, trail = []
             ))}
           </Grid>
         ) : visible.length === 0 ? (
-          <Empty>No fabrics match your filters.</Empty>
+          <Empty>
+            {search
+              ? `No fabrics found for “${search}”. Check the spelling or try a broader term.`
+              : 'No fabrics match your filters.'}
+          </Empty>
         ) : (
           <Grid>
             {visible.map((product, i) => (
