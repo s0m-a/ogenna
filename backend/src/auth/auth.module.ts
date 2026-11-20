@@ -3,6 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { GoogleOAuthService } from './google-oauth.service';
 import { DatabaseModule } from '../database/database.module';
 
 @Module({
@@ -20,7 +21,7 @@ import { DatabaseModule } from '../database/database.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, GoogleOAuthService],
   exports: [JwtModule],
 })
 export class AuthModule {}

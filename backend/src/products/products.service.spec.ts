@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ProductStatus } from '@prisma/client';
 import { ProductsService } from './products.service';
 import { PrismaService } from '../database/prisma.service';
+import { ProductSearchService } from './product-search.service';
 import { SortBy, SortOrder } from './dto/product-query.dto';
 
 const mockPrisma = {
@@ -15,6 +16,8 @@ const mockPrisma = {
   },
   $transaction: jest.fn(),
 };
+
+const mockSearch = { matchIds: jest.fn() };
 
 const makeProduct = (overrides = {}) => ({
   id: 'prod-1',
@@ -37,6 +40,7 @@ describe('ProductsService', () => {
       providers: [
         ProductsService,
         { provide: PrismaService, useValue: mockPrisma },
+        { provide: ProductSearchService, useValue: mockSearch },
       ],
     }).compile();
 
@@ -77,6 +81,51 @@ describe('ProductsService', () => {
       const result = await service.findAll({ page: 1, limit: 20 });
 
       expect(result.meta.totalPages).toBe(3);
+    });
+  });
+
+  describe('search', () => {
+    it('orders search results by relevance when no sort is chosen', async () => {
+      mockSearch.matchIds.mockResolvedValue(['b', 'a', 'c']);
+      // 'c' is excluded by another filter (e.g. category).
+      mockPrisma.product.findMany
+        .mockResolvedValueOnce([{ id: 'a' }, { id: 'b' }])
+        .mockResolvedValueOnce([makeProduct({ id: 'a' }), makeProduct({ id: 'b' })]);
+
+      const result = await service.findAll({ page: 1, limit: 20, search: 'cotton' });
+
+      expect(mockSearch.matchIds).toHaveBeenCalledWith('cotton', { status: ProductStatus.PUBLISHED });
+      expect(result.data.map((p) => p.id)).toEqual(['b', 'a']);
+      expect(result.meta).toMatchObject({ total: 2, totalPages: 1 });
+      expect(mockPrisma.$transaction).not.toHaveBeenCalled();
+    });
+
+    it('keeps an explicit sort and restricts to the matched ids', async () => {
+      mockSearch.matchIds.mockResolvedValue(['b', 'a']);
+      mockPrisma.$transaction.mockResolvedValue([0, []]);
+
+      await service.findAll({ page: 1, limit: 20, search: 'cotton', sortBy: SortBy.NAME, sortOrder: SortOrder.ASC });
+
+      const [, findManyArgs] = mockPrisma.product.findMany.mock.calls.at(-1) ? [null, mockPrisma.product.findMany.mock.calls.at(-1)![0]] : [];
+      expect(findManyArgs.where.id).toEqual({ in: ['b', 'a'] });
+      expect(findManyArgs.orderBy).toEqual({ name: SortOrder.ASC });
+    });
+
+    it('searchPublished returns published matches in ranked order', async () => {
+      mockSearch.matchIds.mockResolvedValue(['b', 'a']);
+      mockPrisma.product.findMany.mockResolvedValue([makeProduct({ id: 'a' }), makeProduct({ id: 'b' })]);
+
+      const result = await service.searchPublished('linen', 5);
+
+      expect(mockSearch.matchIds).toHaveBeenCalledWith('linen', { status: ProductStatus.PUBLISHED, limit: 5 });
+      expect(result.data.map((p) => p.id)).toEqual(['b', 'a']);
+    });
+
+    it('searchPublished skips the product query when nothing matches', async () => {
+      mockSearch.matchIds.mockResolvedValue([]);
+      const result = await service.searchPublished('zzz');
+      expect(result.data).toEqual([]);
+      expect(mockPrisma.product.findMany).not.toHaveBeenCalled();
     });
   });
 

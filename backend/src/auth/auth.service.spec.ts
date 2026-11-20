@@ -5,9 +5,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../database/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { Prisma } from '@prisma/client';
+import { OAuthSignInError } from './auth.service';
 
 const mockPrisma = {
+  oAuthAccount: {
+    findUnique: jest.fn(),
+  },
   user: {
+    findFirst: jest.fn(),
     findUnique: jest.fn(),
     update: jest.fn(),
     create: jest.fn(),
@@ -178,6 +184,151 @@ describe('AuthService', () => {
           data: expect.objectContaining({ role: 'OWNER' }),
         }),
       );
+    });
+  });
+
+  describe('login (staff only)', () => {
+    it('rejects customers, who have no password', async () => {
+      mockPrisma.user.findUnique.mockResolvedValue({
+        id: 'c1',
+        email: 'shopper@example.com',
+        passwordHash: null,
+        role: 'CUSTOMER',
+        isActive: true,
+      });
+
+      await expect(
+        service.login({ email: 'shopper@example.com', password: 'anything' }),
+      ).rejects.toThrow(UnauthorizedException);
+      expect(mockPrisma.refreshToken.create).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('signInWithGoogle', () => {
+    const profile = {
+      sub: 'google-123',
+      email: 'shopper@example.com',
+      emailVerified: true,
+      name: 'Ada Shopper',
+      picture: 'https://lh3.googleusercontent.com/a/pic',
+    };
+
+    beforeEach(() => {
+      mockPrisma.user.update.mockResolvedValue({});
+      mockPrisma.refreshToken.create.mockResolvedValue({});
+    });
+
+    it('signs in a returning customer by their Google id', async () => {
+      mockPrisma.oAuthAccount.findUnique.mockResolvedValue({
+        user: { id: 'c1', email: profile.email, role: 'CUSTOMER', isActive: true },
+      });
+
+      const result = await service.signInWithGoogle(profile);
+
+      expect(result.refreshToken).toHaveLength(64);
+      expect(mockPrisma.user.create).not.toHaveBeenCalled();
+      expect(mockJwtService.sign).toHaveBeenCalledWith(
+        expect.objectContaining({ sub: 'c1', role: 'CUSTOMER' }),
+      );
+    });
+
+    it('creates a CUSTOMER (never staff) account on first sign-in', async () => {
+      mockPrisma.oAuthAccount.findUnique.mockResolvedValue(null);
+      mockPrisma.user.findFirst.mockResolvedValue(null);
+      mockPrisma.user.create.mockResolvedValue({
+        id: 'c2',
+        email: profile.email,
+        role: 'CUSTOMER',
+        isActive: true,
+      });
+
+      await service.signInWithGoogle(profile);
+
+      const data = mockPrisma.user.create.mock.calls[0][0].data;
+      expect(data.role).toBe('CUSTOMER');
+      expect(data.passwordHash).toBeUndefined();
+      expect(data.oauthAccounts.create).toEqual(
+        expect.objectContaining({ provider: 'GOOGLE', providerUserId: 'google-123' }),
+      );
+    });
+
+    it('links Google to an existing customer with the same verified email', async () => {
+      mockPrisma.oAuthAccount.findUnique.mockResolvedValue(null);
+      mockPrisma.user.findFirst.mockResolvedValue({
+        id: 'c3',
+        email: profile.email,
+        role: 'CUSTOMER',
+        isActive: true,
+        avatarUrl: null,
+      });
+      mockPrisma.user.update.mockResolvedValue({
+        id: 'c3',
+        email: profile.email,
+        role: 'CUSTOMER',
+        isActive: true,
+      });
+
+      await service.signInWithGoogle(profile);
+
+      expect(mockPrisma.user.create).not.toHaveBeenCalled();
+      expect(mockPrisma.user.update.mock.calls[0][0].data.oauthAccounts.create).toEqual(
+        expect.objectContaining({ providerUserId: 'google-123' }),
+      );
+    });
+
+    it('refuses to link a Google login to a staff account', async () => {
+      mockPrisma.oAuthAccount.findUnique.mockResolvedValue(null);
+      mockPrisma.user.findFirst.mockResolvedValue({
+        id: 'owner',
+        email: profile.email,
+        role: 'OWNER',
+        isActive: true,
+      });
+
+      await expect(service.signInWithGoogle(profile)).rejects.toEqual(
+        new OAuthSignInError('staff_account'),
+      );
+      expect(mockPrisma.user.update).not.toHaveBeenCalled();
+      expect(mockPrisma.refreshToken.create).not.toHaveBeenCalled();
+    });
+
+    it('refuses an unverified Google email for a new account', async () => {
+      mockPrisma.oAuthAccount.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.signInWithGoogle({ ...profile, emailVerified: false }),
+      ).rejects.toEqual(new OAuthSignInError('email_unverified'));
+      expect(mockPrisma.user.findFirst).not.toHaveBeenCalled();
+    });
+
+    it('refuses a disabled customer', async () => {
+      mockPrisma.oAuthAccount.findUnique.mockResolvedValue({
+        user: { id: 'c1', email: profile.email, role: 'CUSTOMER', isActive: false },
+      });
+
+      await expect(service.signInWithGoogle(profile)).rejects.toEqual(
+        new OAuthSignInError('account_disabled'),
+      );
+      expect(mockPrisma.refreshToken.create).not.toHaveBeenCalled();
+    });
+
+    it('recovers when two first sign-ins race on the unique email', async () => {
+      const conflict = new Prisma.PrismaClientKnownRequestError('dup', {
+        code: 'P2002',
+        clientVersion: 'test',
+      });
+      mockPrisma.oAuthAccount.findUnique
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce({
+          user: { id: 'c4', email: profile.email, role: 'CUSTOMER', isActive: true },
+        });
+      mockPrisma.user.findFirst.mockResolvedValue(null);
+      mockPrisma.user.create.mockRejectedValue(conflict);
+
+      const result = await service.signInWithGoogle(profile);
+
+      expect(result.accessToken).toBe('access-token');
+      expect(mockPrisma.oAuthAccount.findUnique).toHaveBeenCalledTimes(2);
     });
   });
 });

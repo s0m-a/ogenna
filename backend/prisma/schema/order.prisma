@@ -1,0 +1,96 @@
+// Fulfilment lifecycle: PENDING → PAID → SHIPPED → DELIVERED, or CANCELLED / EXPIRED.
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  EXPIRED
+}
+
+// Payment state, recorded separately from fulfilment.
+// AWAITING_TRANSFER: customer chose bank transfer; money not yet confirmed.
+// MISMATCH:          a charge arrived whose amount/currency did not match the order (manual review).
+// REFUND_REQUIRED:   money was received but the order cannot be fulfilled.
+enum PaymentStatus {
+  UNPAID
+  AWAITING_TRANSFER
+  PAID
+  MISMATCH
+  REFUND_REQUIRED
+}
+
+model Order {
+  id        String  @id @default(cuid())
+  // Unique Paystack transaction reference; also the public order identifier.
+  reference String  @unique
+  cartId    String? @unique
+  cart      Cart?   @relation(fields: [cartId], references: [id])
+  userId    String?
+  user      User?   @relation(fields: [userId], references: [id])
+
+  status        OrderStatus   @default(PENDING)
+  paymentStatus PaymentStatus @default(UNPAID)
+
+  email        String
+  customerName String
+  phone        String
+  addressLine1 String
+  addressLine2 String?
+  city         String
+  state        String
+  postalCode   String?
+  country      String  @default("NG")
+
+  // Money captured at purchase, in minor units (kobo).
+  currencyCode   String @default("NGN")
+  subtotalAmount Int
+  shippingAmount Int    @default(0)
+  totalAmount    Int
+
+  paystackAccessCode    String?
+  authorizationUrl      String?
+  paystackTransactionId String?
+  paymentChannel        String?
+  paidAmount            Int?
+  paymentNote           String?
+
+  expiresAt   DateTime
+  paidAt      DateTime?
+  shippedAt   DateTime?
+  deliveredAt DateTime?
+  cancelledAt DateTime?
+  expiredAt   DateTime?
+
+  items     OrderItem[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([email])
+  @@index([status, expiresAt])
+  @@index([createdAt])
+}
+
+// Immutable snapshot of what was bought; survives later product edits or archival.
+model OrderItem {
+  id              String          @id @default(cuid())
+  orderId         String
+  order           Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variantId       String?
+  variant         ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+  productName     String
+  variantName     String
+  sku             String?
+  sellingUnit     String
+  imageUrl        String?
+  quantity        Int
+  unitPriceAmount Int
+  lineTotalAmount Int
+  currencyCode    String          @default("NGN")
+  createdAt       DateTime        @default(now())
+
+  @@index([orderId])
+  @@index([variantId])
+}

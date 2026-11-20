@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -13,17 +15,37 @@ import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { AdminProductQueryDto, ProductQueryDto } from './dto/product-query.dto';
+import { LogSearchDto, ProductSearchQueryDto } from './dto/product-search.dto';
+import { ProductSearchService } from './product-search.service';
+import { RateLimit } from '../common/throttle/rate-limits';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+    private readonly productsService: ProductsService,
+    private readonly productSearch: ProductSearchService,
+  ) {}
 
   @Get()
   findAll(@Query() query: ProductQueryDto) {
     return this.productsService.findAll(query);
+  }
+
+  // Declared before ':slug' so "search" isn't read as a product slug.
+  @Get('search')
+  @RateLimit.search()
+  search(@Query() query: ProductSearchQueryDto) {
+    return this.productsService.searchPublished(query.q, query.limit);
+  }
+
+  @Post('search/log')
+  @RateLimit.searchLog()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async logSearch(@Body() dto: LogSearchDto) {
+    await this.productSearch.record(dto.q);
   }
 
   @Get(':slug')

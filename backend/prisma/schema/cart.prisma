@@ -12,6 +12,7 @@ model Cart {
   guestToken String?    @unique
   status     CartStatus @default(ACTIVE)
   items      CartItem[]
+  order      Order?
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
 
@@ -26,7 +27,7 @@ model CartItem {
   variant         ProductVariant @relation(fields: [variantId], references: [id])
   quantity        Int
   unitPriceAmount Int
-  currencyCode    String         @default("GBP")
+  currencyCode    String         @default("NGN")
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 

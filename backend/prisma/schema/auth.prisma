@@ -4,17 +4,27 @@ enum UserRole {
   CONTENT_EDITOR
   INVENTORY_MANAGER
   ORDER_MANAGER
+  CUSTOMER
+}
+
+enum OAuthProvider {
+  GOOGLE
 }
 
 model User {
   id            String         @id @default(cuid())
   email         String         @unique
-  passwordHash  String
+  // Null for customers who only sign in through an OAuth provider.
+  passwordHash  String?
   name          String
+  avatarUrl     String?
   role          UserRole       @default(CONTENT_EDITOR)
   isActive      Boolean        @default(true)
   refreshTokens RefreshToken[]
+  oauthAccounts OAuthAccount[]
+  addresses     Address[]
   cart          Cart?
+  orders        Order[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   lastLoginAt   DateTime?
@@ -33,4 +43,44 @@ model RefreshToken {
 
   @@index([userId])
   @@index([expiresAt])
+}
+
+// Links a user to an external identity (e.g. their Google account).
+model OAuthAccount {
+  id             String        @id @default(cuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider       OAuthProvider
+  // The provider's stable user id (Google's `sub` claim) — never match on email alone.
+  providerUserId String
+  email          String
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@unique([provider, providerUserId])
+  @@index([userId])
+}
+
+// A customer's saved delivery address. Orders copy the fields at checkout,
+// so editing or deleting an address never changes a past order.
+model Address {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Optional nickname shown in the picker, e.g. "Home" or "Studio".
+  label         String?
+  recipientName String
+  phone         String
+  addressLine1  String
+  addressLine2  String?
+  city          String
+  state         String
+  postalCode    String?
+  country       String   @default("NG")
+  // At most one per user — enforced in AddressesService inside a transaction.
+  isDefault     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
 }

@@ -9,6 +9,9 @@ import { PrismaService } from '../database/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
+import { STAFF_ROLES } from './staff-roles';
+
+const STAFF_ONLY = { role: { in: STAFF_ROLES } };
 
 const BCRYPT_ROUNDS = 12;
 
@@ -29,14 +32,15 @@ export class UsersService {
 
   async findAll() {
     return this.prisma.user.findMany({
+      where: STAFF_ONLY,
       select: USER_SELECT,
       orderBy: { createdAt: 'desc' },
     });
   }
 
   async findOne(id: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id },
+    const user = await this.prisma.user.findFirst({
+      where: { id, ...STAFF_ONLY },
       select: USER_SELECT,
     });
 
