@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import styled, { keyframes } from 'styled-components'
-import { X, Minus, Plus, Trash2 } from 'lucide-react'
+import { PiXLight, PiMinusLight, PiPlusLight, PiTrashLight } from 'react-icons/pi'
 import { useCart, useCartMutations } from '@/hooks/useCart'
 import { useCartDrawer } from './CartDrawerProvider'
 import { CartUpsell } from './CartUpsell'
@@ -261,20 +261,22 @@ const ViewCart = styled(Link)`
   &:hover { background: ${({ theme }) => theme.colors.surfaceMuted}; }
 `
 
-const CheckoutBtn = styled.button`
+const CheckoutBtn = styled(Link)`
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0.875rem 1rem;
-  background: ${({ theme }) => theme.colors.clay};
+  background: ${({ theme }) => theme.colors.terracotta};
   color: ${({ theme }) => theme.colors.textInverse};
   border-radius: ${({ theme }) => theme.radii.full};
   font-family: ${({ theme }) => theme.fonts.nav};
   font-size: ${({ theme }) => theme.fontSizes.sm};
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  cursor: not-allowed;
-  opacity: 0.6;
+  text-decoration: none;
+  transition: background ${({ theme }) => theme.transitions.fast};
+
+  &:hover { background: ${({ theme }) => theme.colors.terracottaDark}; }
 `
 
 /* ── Component ──────────────────────────────────────────── */
@@ -316,11 +318,11 @@ function LineItem({ item, onClose }: { item: CartLineItem; onClose: () => void }
         <UnitPrice>{formatCents(item.unitPriceAmount)}</UnitPrice>
         <QtyRow>
           <QtyBtn type="button" onClick={dec} disabled={item.quantity <= minOrderQty} aria-label="Decrease quantity">
-            <Minus size={14} strokeWidth={1.5} />
+            <PiMinusLight size={14} />
           </QtyBtn>
           <QtyVal>{item.quantity}</QtyVal>
           <QtyBtn type="button" onClick={inc} aria-label="Increase quantity">
-            <Plus size={14} strokeWidth={1.5} />
+            <PiPlusLight size={14} />
           </QtyBtn>
         </QtyRow>
       </Info>
@@ -328,7 +330,7 @@ function LineItem({ item, onClose }: { item: CartLineItem; onClose: () => void }
       <Side>
         <LineTotal>{formatCents(item.lineTotalAmount)}</LineTotal>
         <RemoveBtn type="button" onClick={del} aria-label={`Remove ${item.variant.product.name}`}>
-          <Trash2 size={16} strokeWidth={1.5} />
+          <PiTrashLight size={16} />
         </RemoveBtn>
       </Side>
     </Item>
@@ -366,7 +368,7 @@ export function CartDrawer() {
         <Header>
           <Title>Cart ({count})</Title>
           <CloseBtn type="button" onClick={close} aria-label="Close cart">
-            <X size={20} strokeWidth={1.5} />
+            <PiXLight size={20} />
           </CloseBtn>
         </Header>
 
@@ -398,9 +400,7 @@ export function CartDrawer() {
             <Note>Tax included. Shipping calculated at checkout.</Note>
             <Actions>
               <ViewCart href="/cart" onClick={close}>View cart</ViewCart>
-              <CheckoutBtn type="button" disabled title="Checkout coming soon">
-                Checkout
-              </CheckoutBtn>
+              <CheckoutBtn href="/checkout" onClick={close}>Checkout</CheckoutBtn>
             </Actions>
           </Footer>
         )}

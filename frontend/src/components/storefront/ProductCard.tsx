@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import styled from 'styled-components'
-import { ImageOff, ShoppingBag } from 'lucide-react'
+import { PiImageBrokenLight, PiShoppingBagLight } from 'react-icons/pi'
 import { useCartMutations } from '@/hooks/useCart'
 import { useCartDrawer } from './CartDrawerProvider'
 import type { ProductListItem } from '@/types/product'
@@ -200,7 +200,7 @@ function QuickAddButton({ product }: { product: ProductListItem }) {
         )
       }}
     >
-      <ShoppingBag size={16} strokeWidth={1.5} />
+      <PiShoppingBagLight size={16} />
     </CartButton>
   )
 }
@@ -254,7 +254,7 @@ export function ProductCard({
           </>
         ) : (
           <PlaceholderIcon aria-hidden>
-            <ImageOff size={32} strokeWidth={1.25} />
+            <PiImageBrokenLight size={32} />
           </PlaceholderIcon>
         )}
         {resolvedBadge && <Badge $variant={resolvedBadgeVariant}>{resolvedBadge}</Badge>}

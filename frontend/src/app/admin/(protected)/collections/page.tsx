@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
-import { AlertCircle, Check, Layers, MoreHorizontal, Plus, Trash2, X } from 'lucide-react'
+import { PiWarningCircleLight, PiCheckLight, PiStackLight, PiDotsThreeLight, PiPlusLight, PiTrashLight, PiXLight } from 'react-icons/pi'
 
 import { PageHeader } from '@/components/common/PageHeader'
 import { Button } from '@/components/common/Button'
@@ -174,14 +174,14 @@ function RowMenu({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => voi
   return (
     <ActionWrap ref={ref}>
       <ActionBtn onClick={() => setOpen((v) => !v)} aria-label="Collection actions">
-        <MoreHorizontal size={15} />
+        <PiDotsThreeLight size={15} />
       </ActionBtn>
       {open && (
         <Menu>
           <MenuItem onClick={() => { setOpen(false); onEdit() }}>Edit</MenuItem>
           <MenuSep />
           <MenuItem className="danger" onClick={() => { setOpen(false); onDelete() }}>
-            <Trash2 size={13} strokeWidth={1.75} /> Archive
+            <PiTrashLight size={13} /> Archive
           </MenuItem>
         </Menu>
       )}
@@ -396,12 +396,12 @@ function CollectionPanel({ editing, onClose }: { editing: Collection | null; onC
       <Panel role="dialog" aria-modal aria-label={editing ? 'Edit collection' : 'New collection'}>
         <PanelHeader>
           <PanelTitle>{editing ? 'Edit collection' : 'New collection'}</PanelTitle>
-          <CloseBtn onClick={onClose}><X size={16} /></CloseBtn>
+          <CloseBtn onClick={onClose}><PiXLight size={16} /></CloseBtn>
         </PanelHeader>
         <PanelBody>
           {feedback && (
             <Banner $type={feedback.type}>
-              {feedback.type === 'success' ? <Check size={14} /> : <AlertCircle size={14} />}
+              {feedback.type === 'success' ? <PiCheckLight size={14} /> : <PiWarningCircleLight size={14} />}
               {feedback.message}
             </Banner>
           )}
@@ -476,7 +476,7 @@ export default function CollectionsPage() {
         subtitle="Group products for merchandising, campaigns, and seasonal edits."
         actions={
           <Button $variant="primary" $size="sm" onClick={openNew}>
-            <Plus size={14} strokeWidth={2.5} /> Add collection
+            <PiPlusLight size={14} /> Add collection
           </Button>
         }
       />
@@ -512,12 +512,12 @@ export default function CollectionsPage() {
                 <tr>
                   <Td colSpan={5}>
                     <EmptyState
-                      icon={Layers}
+                      icon={PiStackLight}
                       title="No collections yet"
                       description="Create collections to group products for your storefront."
                       action={
                         <Button $variant="primary" $size="sm" onClick={openNew}>
-                          <Plus size={14} /> Add collection
+                          <PiPlusLight size={14} /> Add collection
                         </Button>
                       }
                     />

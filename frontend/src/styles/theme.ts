@@ -37,12 +37,18 @@ export const theme = {
     sageDark: "#9ba58a",
 
     sand: "#ede3d8",
+
+    // Overlays for text and chrome laid over photography.
+    scrim: "rgba(44, 31, 20, 0.55)",
+    scrimSoft: "rgba(44, 31, 20, 0.18)",
+    hairlineInverse: "rgba(253, 246, 240, 0.35)",
   },
 
   fonts: {
     heading: "var(--font-petrona), Georgia, serif",
     body: "var(--font-petrona), Georgia, serif",
     nav: "var(--font-lora), Georgia, serif",
+    ui: "var(--font-inter), 'PingFang SC', system-ui, sans-serif",
   },
 
   fontSizes: {
@@ -56,6 +62,7 @@ export const theme = {
     "3xl": "1.875rem",
     "4xl": "2.25rem",
     "5xl": "3.0625rem",
+    display: "clamp(2.5rem, 1.3rem + 4vw, 5rem)",
   },
 
   fontWeights: {
@@ -113,14 +120,27 @@ export const theme = {
     sidebarWidth: "248px",
     headerHeight: "60px",
     contentMaxWidth: "1400px",
+    wideMaxWidth: "1920px",
+    pagePaddingXWide: "1.5rem",
     pagePaddingX: "5rem",
     pagePaddingXMobile: "1.25rem",
+    storefrontHeaderHeight: "96px",
+    storefrontHeaderHeightMobile: "68px",
   },
 
   transitions: {
     fast: "120ms ease",
     base: "180ms ease",
     slow: "280ms ease",
+  },
+
+  motion: {
+    easeOut: "cubic-bezier(0.22, 1, 0.36, 1)",
+    revealDuration: "700ms",
+    revealDistance: "16px",
+    staggerMs: 90,
+    easeDrape: "cubic-bezier(0.76, 0, 0.24, 1)",
+    drapeDuration: "1400ms",
   },
 } as const;
 

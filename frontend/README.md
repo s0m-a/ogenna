@@ -8,7 +8,7 @@ Next.js application for the Ogenna fabric e-commerce platform. Contains the publ
 - **Language:** TypeScript
 - **Styling:** styled-components with a shared theme (`src/styles/theme.js`)
 - **Data fetching:** TanStack Query (`@tanstack/react-query`) over an Axios client
-- **Icons:** `lucide-react`, `react-icons`
+- **Icons:** `react-icons` (Phosphor Light, `react-icons/pi`, for UI; Font Awesome 6 for brand logos)
 - **Typography:** Petrona (headings), Lora (sub-headings), Inter / PingFang SC (body)
 
 ## Prerequisites

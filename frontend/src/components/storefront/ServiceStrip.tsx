@@ -1,13 +1,13 @@
 'use client'
 
-import { Ruler, Sparkles } from 'lucide-react'
+import { PiRulerLight, PiSparkleLight } from 'react-icons/pi'
 import { Marquee, type MarqueeItem } from './Marquee'
 import { theme } from '@/styles/theme'
 
 const ITEMS: MarqueeItem[] = [
-  { key: 'min-length', text: 'Shop from 0.5 M', icon: Sparkles },
-  { key: 'curated', text: 'Natural fabrics curated for makers', icon: Ruler },
-  { key: 'trusted', text: 'Trusted by home sewers worldwide', icon: Sparkles },
+  { key: 'min-length', text: 'Shop from 0.5 M', icon: PiSparkleLight },
+  { key: 'curated', text: 'Natural fabrics curated for makers', icon: PiRulerLight },
+  { key: 'trusted', text: 'Trusted by home sewers worldwide', icon: PiSparkleLight },
 ]
 
 export function ServiceStrip() {

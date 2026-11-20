@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import styled from 'styled-components'
-import { AlertCircle, ImageIcon, Plus, Trash2 } from 'lucide-react'
+import { PiWarningCircleLight, PiImageLight, PiPlusLight, PiTrashLight } from 'react-icons/pi'
 import { PageHeader } from '@/components/common/PageHeader'
 import { Button } from '@/components/common/Button'
 import { SearchInput } from '@/components/common/SearchInput'
@@ -219,7 +219,7 @@ function DetailDialog({ asset, onClose }: DetailProps) {
             disabled={remove.isPending || usageCount > 0}
             title={usageCount > 0 ? 'In use — remove references first' : 'Delete'}
           >
-            <Trash2 size={14} /> Delete
+            <PiTrashLight size={14} /> Delete
           </Button>
           <div style={{ flex: 1 }} />
           <Button $variant="secondary" $size="sm" onClick={onClose}>Cancel</Button>
@@ -231,7 +231,7 @@ function DetailDialog({ asset, onClose }: DetailProps) {
     >
       {error && (
         <Banner>
-          <AlertCircle size={14} /> {error}
+          <PiWarningCircleLight size={14} /> {error}
         </Banner>
       )}
 
@@ -290,7 +290,7 @@ function DetailDialog({ asset, onClose }: DetailProps) {
 
       {confirmRemove && (
         <Banner>
-          <AlertCircle size={14} /> Delete this asset? This cannot be undone.
+          <PiWarningCircleLight size={14} /> Delete this asset? This cannot be undone.
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
             <Button $variant="secondary" $size="sm" onClick={() => setConfirmRemove(false)}>Cancel</Button>
             <Button $variant="danger" $size="sm" onClick={handleRemove} disabled={remove.isPending}>
@@ -328,7 +328,7 @@ export default function MediaPage() {
         subtitle="Images uploaded here are available to products, categories, collections, and homepage sections."
         actions={
           <Button $variant="primary" $size="sm" onClick={() => setUploadOpen(true)}>
-            <Plus size={14} strokeWidth={2.5} /> Upload
+            <PiPlusLight size={14} /> Upload
           </Button>
         }
       />
@@ -349,7 +349,7 @@ export default function MediaPage() {
 
       <Card>
         {isLoading ? (
-          <EmptyState icon={ImageIcon} title="Loading…" />
+          <EmptyState icon={PiImageLight} title="Loading…" />
         ) : isError ? (
           <EmptyState
             title="Could not load media"
@@ -357,7 +357,7 @@ export default function MediaPage() {
           />
         ) : !data || data.items.length === 0 ? (
           <EmptyState
-            icon={ImageIcon}
+            icon={PiImageLight}
             title={search ? 'No matches' : 'No media yet'}
             description={
               search ? 'Try a different search.' : 'Upload your first asset to get started.'
@@ -365,7 +365,7 @@ export default function MediaPage() {
             action={
               !search ? (
                 <Button $size="sm" onClick={() => setUploadOpen(true)}>
-                  <Plus size={14} /> Upload
+                  <PiPlusLight size={14} /> Upload
                 </Button>
               ) : undefined
             }

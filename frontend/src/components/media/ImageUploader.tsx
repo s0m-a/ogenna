@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { UploadCloud, X } from 'lucide-react'
+import { PiCloudArrowUpLight, PiXLight } from 'react-icons/pi'
 import { mediaService } from '@/services/media'
 import { useMediaMutations } from '@/hooks/useMedia'
 import type { MediaAsset, MediaResourceType } from '@/types/media'
@@ -229,7 +229,7 @@ export function ImageUploader({
         }}
       >
         <DropIcon aria-hidden>
-          <UploadCloud size={24} strokeWidth={1.5} />
+          <PiCloudArrowUpLight size={24} />
         </DropIcon>
         <DropLabel>Drop files or click to upload</DropLabel>
         <DropHint>PNG, JPG, WEBP up to 10 MB</DropHint>
@@ -261,7 +261,7 @@ export function ImageUploader({
                 onClick={() => setTasks((prev) => prev.filter((t) => t.id !== task.id))}
                 aria-label={`Remove ${task.file.name}`}
               >
-                <X size={14} />
+                <PiXLight size={14} />
               </Remove>
             </TaskRow>
           ))}

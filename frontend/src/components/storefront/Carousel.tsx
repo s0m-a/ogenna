@@ -2,7 +2,7 @@
 
 import { useCallback, useRef } from 'react'
 import styled from 'styled-components'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { PiArrowLeftLight, PiArrowRightLight } from 'react-icons/pi'
 
 interface CarouselProps {
   children: React.ReactNode
@@ -133,7 +133,7 @@ export function Carousel({
         onClick={() => scrollBy('left')}
         aria-label="Scroll left"
       >
-        <ArrowLeft size={18} strokeWidth={1.75} />
+        <PiArrowLeftLight size={18} />
       </NavButton>
 
       <Track
@@ -153,7 +153,7 @@ export function Carousel({
         onClick={() => scrollBy('right')}
         aria-label="Scroll right"
       >
-        <ArrowRight size={18} strokeWidth={1.75} />
+        <PiArrowRightLight size={18} />
       </NavButton>
     </Rail>
   )

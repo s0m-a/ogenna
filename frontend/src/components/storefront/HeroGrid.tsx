@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 
 interface HeroTile {
   title: string
@@ -64,7 +64,26 @@ const Grid = styled.div`
 
 /* ── Tile visuals ────────────────────────────────────────── */
 
-const Tile = styled(Link)`
+const tileIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+`
+
+const Tile = styled(Link)<{ $index: number }>`
+  animation: ${tileIn} ${({ theme }) => theme.motion.revealDuration}
+    ${({ theme }) => theme.motion.easeOut} backwards;
+  animation-delay: ${({ $index, theme }) => $index * theme.motion.staggerMs}ms;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+
   position: relative;
   display: flex;
   align-items: flex-end;
@@ -156,6 +175,7 @@ export function HeroGrid() {
           <Tile
             key={tile.href}
             href={tile.href}
+            $index={idx}
             aria-label={tile.cta ?? tile.title}
           >
             <TileImage

@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import styled from 'styled-components'
-import { X } from 'lucide-react'
+import { PiXLight } from 'react-icons/pi'
 
 const Backdrop = styled.div`
   position: fixed;
@@ -109,7 +109,7 @@ export function Modal({ open, onClose, title, size = 'md', footer, children }: M
           <Header>
             <Title>{title}</Title>
             <Close onClick={onClose} aria-label="Close dialog">
-              <X size={16} />
+              <PiXLight size={16} />
             </Close>
           </Header>
         )}

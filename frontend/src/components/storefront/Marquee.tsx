@@ -3,13 +3,13 @@
 import React from 'react'
 import Link from 'next/link'
 import styled, { keyframes } from 'styled-components'
-import type { LucideIcon } from 'lucide-react'
+import type { IconType } from 'react-icons'
 import type { Theme } from '@/styles/theme'
 
 export interface MarqueeItem {
   key: string
   text: string
-  icon?: LucideIcon
+  icon?: IconType
   link?: { label: string; href: string }
 }
 
@@ -112,7 +112,7 @@ export function Marquee({
             >
               {Icon && (
                 <IconWrap $color={iconColor ?? color} aria-hidden>
-                  <Icon size={18} strokeWidth={1.5} />
+                  <Icon size={18} />
                 </IconWrap>
               )}
               {item.text}

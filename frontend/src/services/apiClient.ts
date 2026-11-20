@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? 'http://localhost:5050/api/v1'
+export const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? 'http://localhost:5050/api/v1'
 
 export const axiosInstance = axios.create({
   baseURL: API_BASE,
@@ -35,8 +35,8 @@ function normalizeError(err: unknown): never {
 }
 
 export const apiClient = {
-  get: <T>(path: string) =>
-    axiosInstance.get<T>(path).then((r) => r.data).catch(normalizeError),
+  get: <T>(path: string, config?: { signal?: AbortSignal }) =>
+    axiosInstance.get<T>(path, config).then((r) => r.data).catch(normalizeError),
 
   post: <T>(path: string, body: unknown) =>
     axiosInstance.post<T>(path, body).then((r) => r.data).catch(normalizeError),

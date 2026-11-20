@@ -1,7 +1,7 @@
 'use client'
 
 import styled from 'styled-components'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { PiCaretLeftLight, PiCaretRightLight } from 'react-icons/pi'
 
 const Wrap = styled.div`
   display: flex;
@@ -93,7 +93,7 @@ export function Pagination({ page, totalPages, total, limit, onPageChange }: Pag
           disabled={page === 1}
           aria-label="Previous page"
         >
-          <ChevronLeft size={14} />
+          <PiCaretLeftLight size={14} />
         </PageBtn>
 
         {pages.map((p, i) =>
@@ -117,7 +117,7 @@ export function Pagination({ page, totalPages, total, limit, onPageChange }: Pag
           disabled={page === totalPages}
           aria-label="Next page"
         >
-          <ChevronRight size={14} />
+          <PiCaretRightLight size={14} />
         </PageBtn>
       </Controls>
     </Wrap>

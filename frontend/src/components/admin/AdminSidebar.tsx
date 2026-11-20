@@ -5,33 +5,13 @@ import Link from 'next/link'
 import NextImage from 'next/image'
 import { usePathname } from 'next/navigation'
 import styled, { css } from 'styled-components'
-import {
-  Activity,
-  Folder,
-  Gift,
-  Home,
-  Image,
-  LayoutDashboard,
-  Layers,
-  Menu,
-  Package,
-  Percent,
-  Settings,
-  Share2,
-  ShoppingCart,
-  Star,
-  Tag,
-  FileText,
-  UserCheck,
-  Users,
-  X,
-} from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
+import { PiPulseLight, PiFolderLight, PiGiftLight, PiHouseLight, PiImageLight, PiSquaresFourLight, PiStackLight, PiListLight, PiPackageLight, PiPercentLight, PiGearSixLight, PiShareNetworkLight, PiShoppingCartLight, PiStarLight, PiTagLight, PiFileTextLight, PiUserCheckLight, PiUsersLight, PiXLight } from 'react-icons/pi'
+import type { IconType } from 'react-icons'
 
 interface NavItem {
   href: string
   label: string
-  Icon: LucideIcon
+  Icon: IconType
 }
 
 interface NavGroup {
@@ -43,49 +23,49 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Overview',
     items: [
-      { href: '/admin/dashboard', label: 'Dashboard', Icon: LayoutDashboard },
+      { href: '/admin/dashboard', label: 'Dashboard', Icon: PiSquaresFourLight },
     ],
   },
   {
     label: 'Catalogue',
     items: [
-      { href: '/admin/products', label: 'Products', Icon: Tag },
-      { href: '/admin/categories', label: 'Categories', Icon: Folder },
-      { href: '/admin/collections', label: 'Collections', Icon: Layers },
-      { href: '/admin/inventory', label: 'Inventory', Icon: Package },
-      { href: '/admin/media', label: 'Media Library', Icon: Image },
+      { href: '/admin/products', label: 'Products', Icon: PiTagLight },
+      { href: '/admin/categories', label: 'Categories', Icon: PiFolderLight },
+      { href: '/admin/collections', label: 'Collections', Icon: PiStackLight },
+      { href: '/admin/inventory', label: 'Inventory', Icon: PiPackageLight },
+      { href: '/admin/media', label: 'Media Library', Icon: PiImageLight },
     ],
   },
   {
     label: 'Storefront',
     items: [
-      { href: '/admin/storefront/homepage', label: 'Homepage Editor', Icon: Home },
-      { href: '/admin/storefront/pages', label: 'Pages & Content', Icon: FileText },
-      { href: '/admin/storefront/navigation', label: 'Navigation Menus', Icon: Menu },
-      { href: '/admin/storefront/reviews', label: 'Reviews', Icon: Star },
+      { href: '/admin/storefront/homepage', label: 'Homepage Editor', Icon: PiHouseLight },
+      { href: '/admin/storefront/pages', label: 'Pages & Content', Icon: PiFileTextLight },
+      { href: '/admin/storefront/navigation', label: 'Navigation Menus', Icon: PiListLight },
+      { href: '/admin/storefront/reviews', label: 'Reviews', Icon: PiStarLight },
     ],
   },
   {
     label: 'Marketing',
     items: [
-      { href: '/admin/discounts', label: 'Discounts & Coupons', Icon: Percent },
-      { href: '/admin/referrals', label: 'Referrals', Icon: Share2 },
-      { href: '/admin/gift-cards', label: 'Gift Cards', Icon: Gift },
+      { href: '/admin/discounts', label: 'Discounts & Coupons', Icon: PiPercentLight },
+      { href: '/admin/referrals', label: 'Referrals', Icon: PiShareNetworkLight },
+      { href: '/admin/gift-cards', label: 'Gift Cards', Icon: PiGiftLight },
     ],
   },
   {
     label: 'Operations',
     items: [
-      { href: '/admin/orders', label: 'Orders', Icon: ShoppingCart },
-      { href: '/admin/customers', label: 'Customers', Icon: Users },
+      { href: '/admin/orders', label: 'Orders', Icon: PiShoppingCartLight },
+      { href: '/admin/customers', label: 'Customers', Icon: PiUsersLight },
     ],
   },
   {
     label: 'Configuration',
     items: [
-      { href: '/admin/settings', label: 'Store Settings', Icon: Settings },
-      { href: '/admin/users', label: 'Users & Permissions', Icon: UserCheck },
-      { href: '/admin/activity', label: 'Activity Log', Icon: Activity },
+      { href: '/admin/settings', label: 'Store Settings', Icon: PiGearSixLight },
+      { href: '/admin/users', label: 'Users & Permissions', Icon: PiUserCheckLight },
+      { href: '/admin/activity', label: 'Activity Log', Icon: PiPulseLight },
     ],
   },
 ]
@@ -256,7 +236,7 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
             />
           </BrandLink>
           <CloseButton onClick={onClose} aria-label="Close navigation">
-            <X size={16} />
+            <PiXLight size={16} />
           </CloseButton>
         </SidebarTop>
 
@@ -274,7 +254,7 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                     aria-current={active ? 'page' : undefined}
                     onClick={onClose}
                   >
-                    <Icon size={15} strokeWidth={1.75} />
+                    <Icon size={15} />
                     {label}
                   </NavLink>
                 )
