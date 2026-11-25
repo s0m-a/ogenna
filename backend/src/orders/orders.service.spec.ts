@@ -431,6 +431,67 @@ describe('OrdersService', () => {
       );
     });
 
+    it('uses the 1440-minute default when ORDER_PAYMENT_EXPIRY_MINUTES is blank', async () => {
+      // Simulates a misconfigured env var (set but empty string).
+      // Number('') === 0, so the old code would expire the order instantly.
+      // The fix: parseInt('', 10) is NaN, and NaN || 1440 === 1440.
+      (config.get as jest.Mock).mockImplementation((k: string) =>
+        k === 'ORDER_PAYMENT_EXPIRY_MINUTES' ? '' : env[k],
+      );
+      mockPrisma.cart.findUnique.mockResolvedValue(makeCart());
+      mockPrisma.cart.updateMany.mockResolvedValue({ count: 1 });
+      let capturedExpiresAt: Date | undefined;
+      mockPrisma.order.create.mockImplementation(async ({ data }: any) => {
+        capturedExpiresAt = data.expiresAt;
+        return { id: 'order-1', ...data };
+      });
+      jest.spyOn(paystack, 'initializeTransaction').mockResolvedValue({
+        authorizationUrl: 'https://checkout.paystack.com/x',
+        accessCode: 'ac',
+        reference: 'ref',
+      });
+      mockPrisma.order.update.mockImplementation(async () => makeOrder());
+
+      const before = Date.now();
+      await service.createFromCart(dto, { guestToken: 'guest-1' });
+
+      expect(capturedExpiresAt).toBeDefined();
+      const expiryMs = capturedExpiresAt!.getTime() - before;
+      const expectedMs = 1440 * 60 * 1000;
+      // Allow a few ms of test execution time either side.
+      expect(expiryMs).toBeGreaterThanOrEqual(expectedMs - 100);
+      expect(expiryMs).toBeLessThanOrEqual(expectedMs + 500);
+    });
+
+    it('logs the access code and re-throws when storing Paystack codes fails', async () => {
+      // Covers the window where Paystack init succeeds but the follow-up
+      // order.update (to persist accessCode + authorizationUrl) hits a DB error.
+      // The order stays PENDING with a live Paystack transaction.
+      // We log the access code so support can share the authorization URL manually.
+      mockPrisma.cart.findUnique.mockResolvedValue(makeCart());
+      mockPrisma.cart.updateMany.mockResolvedValue({ count: 1 });
+      mockPrisma.order.create.mockImplementation(async ({ data }: any) => ({ id: 'order-1', ...data }));
+      jest.spyOn(paystack, 'initializeTransaction').mockResolvedValue({
+        authorizationUrl: 'https://checkout.paystack.com/x',
+        accessCode: 'ac_xyz_123',
+        reference: 'OGN-TEST-1',
+      });
+      // Simulate a transient DB failure when saving the codes.
+      mockPrisma.order.update.mockRejectedValue(new Error('DB connection lost'));
+      const errorSpy = jest
+        .spyOn((service as any).logger, 'error')
+        .mockImplementation(() => {});
+
+      await expect(service.createFromCart(dto, { guestToken: 'guest-1' })).rejects.toThrow(
+        'DB connection lost',
+      );
+
+      // The access code must appear in the log so support can recover.
+      expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('ac_xyz_123'));
+      // The order cleanup path (cart restore) must NOT run — Paystack init succeeded.
+      expect(mockPrisma.cart.update).not.toHaveBeenCalled();
+    });
+
     it('voids the order and restores the cart if Paystack initialization fails', async () => {
       mockPrisma.cart.findUnique.mockResolvedValue(makeCart());
       mockPrisma.cart.updateMany.mockResolvedValue({ count: 1 });
@@ -497,6 +558,29 @@ describe('OrdersService', () => {
         where: { id: 'order-1', status: OrderStatus.PENDING, paymentStatus: PaymentStatus.UNPAID },
         data: { paymentStatus: PaymentStatus.AWAITING_TRANSFER, paymentChannel: 'bank_transfer' },
       });
+    });
+
+    it('falls back to local state and logs a warning when Paystack is unreachable', async () => {
+      // The frontend polls this endpoint every 3 seconds while in "confirming" state.
+      // If Paystack goes down mid-poll the endpoint must still return a usable state
+      // (not throw 500) and must log the failure so we know the gateway is having issues.
+      mockPrisma.order.findUnique.mockResolvedValue(makeOrder());
+      jest
+        .spyOn(paystack, 'verifyTransaction')
+        .mockRejectedValue(new Error('Paystack timeout'));
+      const warnSpy = jest
+        .spyOn((service as any).logger, 'warn')
+        .mockImplementation(() => {});
+
+      // Should resolve (not throw) even though Paystack is down.
+      const result = await service.verifyForDisplay('OGN-TEST-1');
+
+      expect(result.payment.state).toBe('not_completed');
+      expect(result.order.status).toBe(OrderStatus.PENDING);
+      // Warning must include the reference so we can correlate it in logs.
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('OGN-TEST-1'));
+      // No DB writes: we never change the order state from a display-only call.
+      expect(mockPrisma.order.updateMany).not.toHaveBeenCalled();
     });
 
     it('does not expose the full email address', async () => {

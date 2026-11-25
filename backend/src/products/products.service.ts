@@ -24,7 +24,61 @@ export class ProductsService {
       status: ProductStatus.PUBLISHED,
       limit,
     });
-    return { data: await this.findListItemsInOrder(ids) };
+    if (!ids.length) return { data: [] };
+
+    const rows = await this.prisma.product.findMany({
+      where: { id: { in: ids } },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        fabricType: true,
+        images: {
+          orderBy: { position: 'asc' },
+          take: 1,
+          select: { id: true, url: true, altText: true },
+        },
+        variants: {
+          where: { isActive: true },
+          orderBy: { isDefault: 'desc' },
+          select: {
+            id: true,
+            priceAmount: true,
+            salePriceAmount: true,
+            inventory: { select: { quantityOnHand: true, quantityReserved: true } },
+          },
+        },
+      },
+    });
+
+    const position = new Map(ids.map((id, i) => [id, i]));
+    const data = rows
+      .sort((a, b) => position.get(a.id)! - position.get(b.id)!)
+      .map((p) => {
+        const prices = p.variants.map((v) => v.priceAmount);
+        const salePrices = p.variants
+          .map((v) => v.salePriceAmount)
+          .filter((n): n is number => n !== null);
+        const totalStock = p.variants.reduce(
+          (sum, v) => sum + (v.inventory ? v.inventory.quantityOnHand - v.inventory.quantityReserved : 0),
+          0,
+        );
+        return {
+          id: p.id,
+          name: p.name,
+          slug: p.slug,
+          fabricType: p.fabricType,
+          coverImage: p.images[0] ?? null,
+          defaultVariantId: p.variants[0]?.id ?? null,
+          priceMin: prices.length ? Math.min(...prices) / 100 : undefined,
+          priceMax: prices.length ? Math.max(...prices) / 100 : undefined,
+          salePriceMin: salePrices.length ? Math.min(...salePrices) / 100 : undefined,
+          salePriceMax: salePrices.length ? Math.max(...salePrices) / 100 : undefined,
+          totalStock,
+        };
+      });
+
+    return { data };
   }
 
   /** Loads list items for `ids`, keeping the order of `ids`. */

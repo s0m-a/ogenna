@@ -190,7 +190,7 @@ export class OrdersService {
     }
 
     const reference = this.generateReference();
-    const expiryMinutes = Number(this.config.get('ORDER_PAYMENT_EXPIRY_MINUTES') ?? 1440);
+    const expiryMinutes = parseInt(this.config.get('ORDER_PAYMENT_EXPIRY_MINUTES') ?? '1440', 10) || 1440;
 
     const order = await this.prisma.$transaction(async (tx) => {
       // Claim the cart. A concurrent duplicate submission finds no ACTIVE row
@@ -263,14 +263,27 @@ export class OrdersService {
       throw err;
     }
 
-    const saved = await this.prisma.order.update({
-      where: { id: order.id },
-      data: {
-        authorizationUrl: initialized.authorizationUrl,
-        paystackAccessCode: initialized.accessCode,
-      },
-      include: { items: true },
-    });
+    let saved: Prisma.OrderGetPayload<{ include: { items: true } }>;
+    try {
+      saved = await this.prisma.order.update({
+        where: { id: order.id },
+        data: {
+          authorizationUrl: initialized.authorizationUrl,
+          paystackAccessCode: initialized.accessCode,
+        },
+        include: { items: true },
+      });
+    } catch (err) {
+      // The order is PENDING and the Paystack transaction is live. Log the codes
+      // so support can share the authorization URL with the customer manually.
+      this.logger.error(
+        `Order ${order.reference}: Paystack init succeeded ` +
+          `(accessCode=${initialized.accessCode}, url=${initialized.authorizationUrl}) ` +
+          `but persisting the codes failed: ${(err as Error).message}. ` +
+          `The order remains PENDING — customer can pay at the authorization URL.`,
+      );
+      throw err;
+    }
 
     return {
       order: this.shapePublic(saved),
@@ -355,8 +368,10 @@ export class OrdersService {
             include: { items: true },
           });
         }
-      } catch {
-        // Paystack unavailable or transaction not started — fall back to our own state.
+      } catch (err) {
+        this.logger.warn(
+          `verifyForDisplay: Paystack verify failed for ${reference}: ${(err as Error).message}`,
+        );
       }
     }
 
