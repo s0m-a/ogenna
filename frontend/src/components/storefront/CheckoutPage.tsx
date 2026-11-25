@@ -103,6 +103,16 @@ export function CheckoutPage() {
     }
   }, [addresses.data, addressChoice])
 
+  // If the user refreshes after placing an order, the cart is gone but `placed`
+  // is cleared (React state). Redirect them to their order so they can still pay.
+  useEffect(() => {
+    if (placed || cartLoading) return
+    const ref = sessionStorage.getItem('ogenna:pending_order')
+    if (ref && !cart?.items.length) {
+      router.replace(`/orders/${encodeURIComponent(ref)}`)
+    }
+  }, [placed, cartLoading, cart, router])
+
   const chooseAddress = (choice: string) => {
     setAddressChoice(choice)
     setErrors({})
@@ -127,6 +137,7 @@ export function CheckoutPage() {
     void popup.open({
       accessCode: result.accessCode,
       onSuccess: (reference) => {
+        sessionStorage.removeItem('ogenna:pending_order')
         setRedirecting(true)
         router.push(`/checkout/callback?reference=${encodeURIComponent(reference)}`)
       },
@@ -168,6 +179,7 @@ export function CheckoutPage() {
         postalCode: form.postalCode.trim() || undefined,
       })
       setPlaced(result)
+      sessionStorage.setItem('ogenna:pending_order', result.order.reference)
       openPayment(result)
 
       // Best effort: the order is placed either way; duplicates are ignored server-side.
@@ -392,6 +404,10 @@ export function CheckoutPage() {
             <Row>
               <span>Subtotal</span>
               <span>{formatMoney(cart?.subtotalAmount ?? 0, cart?.currencyCode)}</span>
+            </Row>
+            <Row>
+              <span>Shipping</span>
+              <span>Free</span>
             </Row>
             <Total>
               <span>Total</span>

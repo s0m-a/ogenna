@@ -1,5 +1,4 @@
-/// One row per submitted storefront search, so staff can see what customers
-/// look for and which terms find nothing. Holds no user, IP or device data.
+
 model SearchQuery {
   id          String   @id @default(cuid())
   /// Normalised: trimmed, lower-cased, inner whitespace collapsed.
